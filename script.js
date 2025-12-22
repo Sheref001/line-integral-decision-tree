@@ -17,6 +17,7 @@ function chooseCurve(type) {
 function chooseField(type) {
   fieldType = type;
 
+  // Hide method step by default
   document.getElementById("step-method").classList.add("hidden");
 
   // Scalar fields: method choice only meaningful in the plane
@@ -26,7 +27,7 @@ function chooseField(type) {
 
   // Vector fields OR space scalar fields: go directly to result
   if (fieldType === "vector" || (fieldType === "scalar" && curveType === "space")) {
-    methodType = "ds"; // force correct behavior
+    methodType = "ds"; // enforce correct behavior
     showResult();
   }
 }
@@ -37,7 +38,7 @@ function chooseMethod(type) {
 }
 
 // ------------------------------------------------
-// Result logic (TikZ-faithful + pedagogically correct)
+// Result logic (fixed + consistent)
 // ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
@@ -47,6 +48,7 @@ function showResult() {
   let formula = "";
   let explanationHTML = "";
 
+  // Reset special case
   naturalDiv.classList.add("hidden");
   naturalDiv.innerHTML = "";
 
@@ -129,30 +131,9 @@ function showResult() {
   }
 
   // =================================================
-  // Space curve — scalar field - ds
+  // Space curve — scalar field (parametric only)
   // =================================================
-  if (curveType === "space" && fieldType === "scalar" && && methodType === "ds") {
-    formula = `
-    $$\\int_C f(x,y,z)\\,ds
-    =
-    \\int_a^b
-    f(x(t),y(t),z(t))
-    \\sqrt{\\left(\\frac{dx}{dt}\\right)^2
-          +\\left(\\frac{dy}{dt}\\right)^2
-          +\\left(\\frac{dz}{dt}\\right)^2}\\,dt$$
-    `;
-    explanationHTML = `
-      For space curves, scalar line integrals are almost always computed
-      using a parametrization.
-      Unlike plane curves, space curves are rarely described as graphs
-      of functions.
-    `;
-  }
-
-  // =================================================
-  // Space curve — scalar field (PARAMETRIC ONLY)
-  // =================================================
-  if (curveType === "space" && fieldType === "scalar" &&methodType === "dxdydz") {
+  if (curveType === "space" && fieldType === "scalar") {
     formula = `
     $$\\int_C f(x,y,z)\\,ds
     =
