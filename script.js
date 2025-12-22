@@ -11,7 +11,6 @@ let methodType = "";
 function chooseCurve(type) {
   curveType = type;
 
-  // Reset downstream UI
   hideAllSteps();
   document.getElementById("step-field").classList.remove("hidden");
 }
@@ -22,12 +21,12 @@ function chooseField(type) {
   // Always hide method step first
   document.getElementById("step-method").classList.add("hidden");
 
-  // Scalar fields: must choose ds vs coordinates
+  // Scalar fields: choose how to integrate
   if (fieldType === "scalar") {
     document.getElementById("step-method").classList.remove("hidden");
   }
 
-  // Vector fields: no choice, go directly to result
+  // Vector fields: no choice
   if (fieldType === "vector") {
     methodType = "";
     showResult();
@@ -40,7 +39,7 @@ function chooseMethod(type) {
 }
 
 // ------------------------------------------------
-// Result logic (faithful to TikZ)
+// Result logic (faithful to TikZ notation)
 // ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
@@ -55,7 +54,7 @@ function showResult() {
   naturalDiv.innerHTML = "";
 
   // =================================================
-  // Plane curve — scalar field
+  // Plane curve R^2 — scalar field f(x,y)
   // =================================================
   if (curveType === "plane" && fieldType === "scalar" && methodType === "ds") {
     formula = `
@@ -65,17 +64,17 @@ function showResult() {
     \\sqrt{(x')^2+(y')^2}\\,dt$$
     `;
     explanation =
-      "This integral accumulates the scalar field along the curve itself. The factor ds accounts for the geometry of the path.";
+      "This integral measures the accumulation of the scalar field f(x,y) along the curve itself. The element ds accounts for the geometry of the curve.";
 
     // Natural parametrization (special case)
     naturalDiv.innerHTML = `
     <b>Special case: natural parametrization</b><br><br>
     $$\\text{If } y=g(x):\\quad
-    \\int_C f\\,ds
+    \\int_C f(x,y)\\,ds
     =
     \\int_a^b f(x,g(x))\\sqrt{1+(g'(x))^2}\\,dx$$
     $$\\text{If } x=h(y):\\quad
-    \\int_C f\\,ds
+    \\int_C f(x,y)\\,ds
     =
     \\int_a^b f(h(y),y)\\sqrt{1+(h'(y))^2}\\,dy$$
     `;
@@ -89,11 +88,11 @@ function showResult() {
     \\int_C f(x,y)\\,dy$$
     `;
     explanation =
-      "Here accumulation is measured relative to a chosen coordinate direction. The result depends on how the curve is traversed.";
+      "Here the scalar field f(x,y) is accumulated relative to a chosen coordinate direction rather than intrinsic arc length.";
   }
 
   // =================================================
-  // Plane curve — vector field
+  // Plane curve R^2 — vector field <P,Q>
   // =================================================
   if (curveType === "plane" && fieldType === "vector") {
     formula = `
@@ -104,11 +103,11 @@ function showResult() {
     \\int_a^b (P x' + Q y')\\,dt$$
     `;
     explanation =
-      "The dot product extracts the tangential component of the vector field. This line integral represents work done along the curve.";
+      "The dot product extracts the component of the vector field \\(\\langle P,Q\\rangle\\) tangent to the curve. This integral represents work along the path.";
   }
 
   // =================================================
-  // Space curve — scalar field
+  // Space curve R^3 — scalar field f(x,y,z)
   // =================================================
   if (curveType === "space" && fieldType === "scalar" && methodType === "ds") {
     formula = `
@@ -118,22 +117,22 @@ function showResult() {
     \\sqrt{(x')^2+(y')^2+(z')^2}\\,dt$$
     `;
     explanation =
-      "The scalar field is accumulated along the space curve, with ds capturing the curve's geometry in three dimensions.";
+      "The scalar field f(x,y,z) is accumulated along the space curve, with ds capturing the geometry in three dimensions.";
   }
 
   // =================================================
-  // Space curve — vector field
+  // Space curve R^3 — vector field <P,Q,R>
   // =================================================
   if (curveType === "space" && fieldType === "vector") {
     formula = `
-    $$\\int\limits_C \\mathbf{F}\\cdot d\\mathbf{r}
+    $$\\int_C \\mathbf{F}\\cdot d\\mathbf{r}
     =
-    \\int\limits_C P\\,dx + Q\\,dy + R\\,dz
+    \\int_C P\\,dx + Q\\,dy + R\\,dz
     =
     \\int_a^b (P x' + Q y' + R z')\\,dt$$
     `;
     explanation =
-      "This integral sums the tangential component of the vector field along the space curve, interpreted as work.";
+      "This line integral sums the tangential component of the vector field \\(\\langle P,Q,R\\rangle\\) along the space curve.";
   }
 
   // Inject content
@@ -141,7 +140,7 @@ function showResult() {
   explanationDiv.innerText = explanation;
   document.getElementById("result").classList.remove("hidden");
 
-  // Force MathJax rendering
+  // MathJax re-render
   if (window.MathJax) {
     MathJax.typesetClear([formulaDiv, naturalDiv]);
     MathJax.typesetPromise([formulaDiv, naturalDiv]);
