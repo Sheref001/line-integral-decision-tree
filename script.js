@@ -20,23 +20,25 @@ function chooseField(type) {
   // Hide method step by default
   document.getElementById("step-method").classList.add("hidden");
 
-  // Plane scalar: method choice
+  // Plane scalar: choose ds or dx/dy
   if (fieldType === "scalar" && curveType === "plane") {
     document.getElementById("step-method").classList.remove("hidden");
   }
 
-  // Space vector: method choice (ds vs dx dy dz)
-  if (fieldType === "vector" && curveType === "space") {
+  // Space scalar: choose ds or dx/dy/dz
+  if (fieldType === "scalar" && curveType === "space") {
     document.getElementById("step-method").classList.remove("hidden");
   }
 
-  // Plane vector OR space scalar: go directly to result
-  if (
-    (fieldType === "vector" && curveType === "plane") ||
-    (fieldType === "scalar" && curveType === "space")
-  ) {
-    methodType = "ds";
+  // Plane vector: go directly to result
+  if (fieldType === "vector" && curveType === "plane") {
+    methodType = "coord";
     showResult();
+  }
+
+  // Space vector: choose dx/dy/dz
+  if (fieldType === "vector" && curveType === "space") {
+    document.getElementById("step-method").classList.remove("hidden");
   }
 }
 
@@ -56,11 +58,12 @@ function showResult() {
   let formula = "";
   let explanationHTML = "";
 
+  // Reset special case
   naturalDiv.classList.add("hidden");
   naturalDiv.innerHTML = "";
 
   // =================================================
-  // Plane curve — scalar field — arc length
+  // Plane curve — scalar field — arc length ds
   // =================================================
   if (curveType === "plane" && fieldType === "scalar" && methodType === "ds") {
     formula = `
@@ -80,11 +83,11 @@ function showResult() {
 
     naturalDiv.innerHTML = `
       <b>Special case: natural parametrization</b><br><br>
-      $$\\text{If } y=g(x):\\quad
+      $$\\text{If } y=g(x):\\;
       \\int_C f(x,y)\\,ds
       =
       \\int_a^b f(x,g(x))\\sqrt{1+(g'(x))^2}\\,dx$$
-      $$\\text{If } x=h(y):\\quad
+      $$\\text{If } x=h(y):\\;
       \\int_C f(x,y)\\,ds
       =
       \\int_a^b f(h(y),y)\\sqrt{1+(h'(y))^2}\\,dy$$
@@ -111,7 +114,7 @@ function showResult() {
     explanationHTML = `
       These formulas follow from parametrizing the curve as
       <span class="math">\\(x=x(t),\\;y=y(t)\\)</span>
-      and rewriting the coordinate differentials
+      and expressing the coordinate differentials
       <span class="math">\\(dx,dy\\)</span>
       in terms of
       <span class="math">\\(dt\\)</span>.
@@ -137,9 +140,9 @@ function showResult() {
   }
 
   // =================================================
-  // Space curve — scalar field — arc length
+  // Space curve — scalar field — arc length ds
   // =================================================
-  if (curveType === "space" && fieldType === "scalar") {
+  if (curveType === "space" && fieldType === "scalar" && methodType === "ds") {
     formula = `
     $$\\int_C f(x,y,z)\\,ds
     =
@@ -149,20 +152,37 @@ function showResult() {
           +\\left(\\frac{dz}{dt}\\right)^2}\\,dt$$
     `;
     explanationHTML = `
-      For space curves, scalar line integrals are almost always computed
-      using a parametrization. Unlike plane curves, space curves are
-      rarely described as graphs of functions.
+      This is the standard scalar line integral along a space curve,
+      computed using a parametrization.
     `;
   }
 
   // =================================================
-  // Space curve — vector field — dx dy dz
+  // Space curve — scalar field — dx / dy / dz
   // =================================================
-  if (
-    curveType === "space" &&
-    fieldType === "vector" &&
-    (methodType === "dxyz" || methodType === "coord")
-  ) {
+  if (curveType === "space" && fieldType === "scalar" && methodType === "dxyz") {
+    formula = `
+    $$\\int_C f(x,y,z)\\,dx
+    =
+    \\int_a^b f(x(t),y(t),z(t))\\,x'(t)\\,dt$$
+    $$\\int_C f(x,y,z)\\,dy
+    =
+    \\int_a^b f(x(t),y(t),z(t))\\,y'(t)\\,dt$$
+    $$\\int_C f(x,y,z)\\,dz
+    =
+    \\int_a^b f(x(t),y(t),z(t))\\,z'(t)\\,dt$$
+    `;
+    explanationHTML = `
+      Although less common in practice, scalar line integrals along space
+      curves can also be expressed using coordinate differentials once a
+      parametrization is chosen.
+    `;
+  }
+
+  // =================================================
+  // Space curve — vector field — dx / dy / dz
+  // =================================================
+  if (curveType === "space" && fieldType === "vector" && methodType === "dxyz") {
     formula = `
     $$\\int_C P(x,y,z)\\,dx + Q(x,y,z)\\,dy + R(x,y,z)\\,dz
     =
