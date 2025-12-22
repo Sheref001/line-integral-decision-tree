@@ -129,7 +129,7 @@ function showResult() {
   }
 
   // =================================================
-  // Space curve — scalar field (PARAMETRIC ONLY)
+  // Space curve — scalar field - ds
   // =================================================
   if (curveType === "space" && fieldType === "scalar" && && methodType === "ds") {
     formula = `
@@ -152,8 +152,7 @@ function showResult() {
   // =================================================
   // Space curve — scalar field (PARAMETRIC ONLY)
   // =================================================
-  if (curveType === "space" && fieldType === "scalar" &&(methodType === "dxdydz" || methodType === "coord")
-  )) {
+  if (curveType === "space" && fieldType === "scalar" &&methodType === "dxdydz") {
     formula = `
     $$\\int_C f(x,y,z)\\,ds
     =
