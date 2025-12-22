@@ -1,7 +1,13 @@
+// ------------------------------------------------
+// State variables
+// ------------------------------------------------
 let curveType = "";
 let fieldType = "";
 let methodType = "";
 
+// ------------------------------------------------
+// Step handlers
+// ------------------------------------------------
 function chooseCurve(type) {
   curveType = type;
   document.getElementById("step-field").classList.remove("hidden");
@@ -17,6 +23,9 @@ function chooseMethod(type) {
   showResult();
 }
 
+// ------------------------------------------------
+// Result logic (MathJax-safe)
+// ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
   let formula = "";
@@ -72,15 +81,22 @@ function showResult() {
     `;
   }
 
+  // Inject formula
   formulaDiv.innerHTML = formula;
   document.getElementById("result").classList.remove("hidden");
 
-  // Tell MathJax to typeset the new content
+  // ------------------------------------------------
+  // Force MathJax to typeset dynamic content
+  // ------------------------------------------------
   if (window.MathJax) {
-    MathJax.typesetPromise();
+    MathJax.typesetClear([formulaDiv]);
+    MathJax.typesetPromise([formulaDiv]);
   }
 }
 
+// ------------------------------------------------
+// Reset
+// ------------------------------------------------
 function resetTree() {
   curveType = "";
   fieldType = "";
