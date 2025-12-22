@@ -42,20 +42,24 @@
   </div>
 
   <!-- ========================= -->
-  <!-- STEP 3: What are you integrating with respect to? -->
-  <!-- ========================= -->
-  <div id="step-method" class="step hidden">
-    <h2>3. What are you integrating with respect to?</h2>
+<!-- STEP 3: What are you integrating with respect to? -->
+<!-- ========================= -->
+<div id="step-method" class="step hidden">
+  <h2>3. What are you integrating with respect to?</h2>
 
-    <!-- Arc length -->
-    <button onclick="chooseMethod('ds')">Arc length \( ds \)</button>
+  <button id="btn-ds" onclick="chooseMethod('ds')">
+    Arc length \( ds \)
+  </button>
 
-    <!-- Plane coordinates -->
-    <button onclick="chooseMethod('dxdy')">Coordinates \( dx, dy \)</button>
+  <button id="btn-dxdy" onclick="chooseMethod('dxdy')">
+    Coordinates \( dx, dy \)
+  </button>
 
-    <!-- Space coordinates -->
-    <button onclick="chooseMethod('dxyz')">Coordinates \( dx, dy, dz \)</button>
-  </div>
+  <button id="btn-dxyz" onclick="chooseMethod('dxyz')">
+    Coordinates \( dx, dy, dz \)
+  </button>
+</div>
+
 
   <!-- ========================= -->
   <!-- RESULT -->
