@@ -38,7 +38,7 @@ function chooseMethod(type) {
 }
 
 // ------------------------------------------------
-// Result logic (exactly matching TikZ)
+// Result logic (TikZ-faithful and robust)
 // ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
@@ -55,7 +55,11 @@ function showResult() {
   // =================================================
   // Plane curve R^2 — scalar field f(x,y), arc length
   // =================================================
-  if (curveType === "plane" && fieldType === "scalar" && methodType === "ds") {
+  if (
+    curveType === "plane" &&
+    fieldType === "scalar" &&
+    methodType === "ds"
+  ) {
     formula = `
     $$\\int_C f(x,y)\\,ds
     =
@@ -70,7 +74,7 @@ function showResult() {
       accounts for the geometry of the curve.
     `;
 
-    // Natural parametrization (special case)
+    // Natural parametrization
     naturalDiv.innerHTML = `
       <b>Special case: natural parametrization</b><br><br>
       $$\\text{If } y=g(x):\\quad
@@ -87,9 +91,13 @@ function showResult() {
 
   // =================================================
   // Plane curve R^2 — scalar field f(x,y), dx / dy
-  // (FULL TikZ formulas — NOT naive)
+  // ACCEPTS "coord" OR "dxdy"
   // =================================================
-  if (curveType === "plane" && fieldType === "scalar" && methodType === "coord") {
+  if (
+    curveType === "plane" &&
+    fieldType === "scalar" &&
+    (methodType === "coord" || methodType === "dxdy")
+  ) {
     formula = `
     $$\\begin{aligned}
     \\int_C f(x,y)\\,dx
@@ -127,9 +135,13 @@ function showResult() {
   }
 
   // =================================================
-  // Space curve R^3 — scalar field f(x,y,z), arc length
+  // Space curve R^3 — scalar field f(x,y,z)
   // =================================================
-  if (curveType === "space" && fieldType === "scalar" && methodType === "ds") {
+  if (
+    curveType === "space" &&
+    fieldType === "scalar" &&
+    methodType === "ds"
+  ) {
     formula = `
     $$\\int_C f(x,y,z)\\,ds
     =
@@ -164,12 +176,12 @@ function showResult() {
     `;
   }
 
-  // Inject content (innerHTML required for LaTeX)
+  // Inject content
   formulaDiv.innerHTML = formula;
   explanationDiv.innerHTML = explanationHTML;
   document.getElementById("result").classList.remove("hidden");
 
-  // Force MathJax rendering
+  // MathJax re-render
   if (window.MathJax) {
     MathJax.typesetClear([formulaDiv, explanationDiv, naturalDiv]);
     MathJax.typesetPromise([formulaDiv, explanationDiv, naturalDiv]);
