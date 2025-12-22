@@ -150,6 +150,28 @@ function showResult() {
   }
 
   // =================================================
+  // Space curve — scalar field (PARAMETRIC ONLY)
+  // =================================================
+  if (curveType === "space" && fieldType === "scalar" &&(methodType === "dxdydz" || methodType === "coord")
+  )) {
+    formula = `
+    $$\\int_C f(x,y,z)\\,ds
+    =
+    \\int_a^b
+    f(x(t),y(t),z(t))
+    \\sqrt{\\left(\\frac{dx}{dt}\\right)^2
+          +\\left(\\frac{dy}{dt}\\right)^2
+          +\\left(\\frac{dz}{dt}\\right)^2}\\,dt$$
+    `;
+    explanationHTML = `
+      For space curves, scalar line integrals are almost always computed
+      using a parametrization.
+      Unlike plane curves, space curves are rarely described as graphs
+      of functions.
+    `;
+  }
+
+  // =================================================
   // Space curve — vector field
   // =================================================
   if (curveType === "space" && fieldType === "vector") {
