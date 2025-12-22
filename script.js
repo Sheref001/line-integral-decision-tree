@@ -95,8 +95,8 @@ function showResult() {
 
     naturalDiv.innerHTML = `
       <b>Special case: natural parametrization</b><br><br>
-      $$y=g(x):\\; \\int f(x,g(x))\\sqrt{1+(g')^2}\\,dx$$
-      $$x=h(y):\\; \\int f(h(y),y)\\sqrt{1+(h')^2}\\,dy$$
+      $$y=g(x):\\; \\int_a^b f(x,g(x))\\sqrt{1+(g')^2}\\,dx$$
+      $$x=h(y):\\; \\int_a^b f(h(y),y)\\sqrt{1+(h')^2}\\,dy$$
     `;
     naturalDiv.classList.remove("hidden");
   }
@@ -108,8 +108,8 @@ function showResult() {
     methodType === "dxdy"
   ) {
     formula = `
-    $$\\int\limits_C f(x,y)\\,dx = \\int f(x(t),y(t))x'(t)dt$$
-    $$\\int\limits_C f(x,y)\\,dy = \\int f(x(t),y(t))y'(t)dt$$
+    $$\\int\limits_C f(x,y)\\,dx = \\int_a^b f(x(t),y(t))x'(t)dt$$
+    $$\\int\limits_C f(x,y)\\,dy = \\int_a^b f(x(t),y(t))y'(t)dt$$
     `;
     explanationHTML = `Scalar line integrals via coordinate differentials.`;
   }
@@ -138,9 +138,9 @@ function showResult() {
   // Space scalar — dx, dy, dz
   if (curveType === "space" && fieldType === "scalar" && methodType === "dxyz") {
     formula = `
-    $$\\int\limits_C f(x,y,z)\\,dx = \\int f(x(t),y(t),z(t)) x' dt$$
-    $$\\int\limits_C f(x,y,z)\\,dy = \\int f(x(t),y(t),z(t)) y' dt$$
-    $$\\int\limits_C f(x,y,z)\\,dz = \\int f(x(t),y(t),z(t)) z' dt$$
+    $$\\int\limits_C f(x,y,z)\\,dx = \\int_a^b f(x(t),y(t),z(t)) x' dt$$
+    $$\\int\limits_C f(x,y,z)\\,dy = \\int_a^b f(x(t),y(t),z(t)) y' dt$$
+    $$\\int\limits_C f(x,y,z)\\,dz = \\int_a^b f(x(t),y(t),z(t)) z' dt$$
     `;
     explanationHTML = `Coordinate-based scalar integrals in space.`;
   }
