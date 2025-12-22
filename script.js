@@ -20,13 +20,21 @@ function chooseField(type) {
   // Hide method step by default
   document.getElementById("step-method").classList.add("hidden");
 
-  // Scalar fields: method choice only meaningful in the plane
+  // Plane scalar: method choice
   if (fieldType === "scalar" && curveType === "plane") {
     document.getElementById("step-method").classList.remove("hidden");
   }
 
-  // Vector fields OR space scalar fields: go directly to result
-  if (fieldType === "vector" || (fieldType === "scalar" && curveType === "space")) {
+  // Space vector: method choice (ds vs dx dy dz)
+  if (fieldType === "vector" && curveType === "space") {
+    document.getElementById("step-method").classList.remove("hidden");
+  }
+
+  // Plane vector OR space scalar: go directly to result
+  if (
+    (fieldType === "vector" && curveType === "plane") ||
+    (fieldType === "scalar" && curveType === "space")
+  ) {
     methodType = "ds";
     showResult();
   }
@@ -38,7 +46,7 @@ function chooseMethod(type) {
 }
 
 // ------------------------------------------------
-// Result logic (TikZ-faithful and correct)
+// Result logic
 // ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
@@ -48,7 +56,6 @@ function showResult() {
   let formula = "";
   let explanationHTML = "";
 
-  // Reset special case
   naturalDiv.classList.add("hidden");
   naturalDiv.innerHTML = "";
 
@@ -63,7 +70,6 @@ function showResult() {
     \\sqrt{\\left(\\frac{dx}{dt}\\right)^2
           +\\left(\\frac{dy}{dt}\\right)^2}\\,dt$$
     `;
-
     explanationHTML = `
       This integral accumulates the scalar field
       <span class="math">\\(f(x,y)\\)</span>
@@ -102,7 +108,6 @@ function showResult() {
     &= \\int_a^b f(x(t),y(t))\\frac{dy}{dt}\\,dt
     \\end{aligned}$$
     `;
-
     explanationHTML = `
       These formulas follow from parametrizing the curve as
       <span class="math">\\(x=x(t),\\;y=y(t)\\)</span>
@@ -124,7 +129,6 @@ function showResult() {
     =
     \\int_a^b (P x' + Q y')\\,dt$$
     `;
-
     explanationHTML = `
       This line integral represents the work done by the vector field
       <span class="math">\\(\\langle P,Q \\rangle\\)</span>
@@ -133,7 +137,7 @@ function showResult() {
   }
 
   // =================================================
-  // Space curve — scalar field (parametric only)
+  // Space curve — scalar field — arc length
   // =================================================
   if (curveType === "space" && fieldType === "scalar") {
     formula = `
@@ -144,7 +148,6 @@ function showResult() {
           +\\left(\\frac{dy}{dt}\\right)^2
           +\\left(\\frac{dz}{dt}\\right)^2}\\,dt$$
     `;
-
     explanationHTML = `
       For space curves, scalar line integrals are almost always computed
       using a parametrization. Unlike plane curves, space curves are
@@ -153,21 +156,25 @@ function showResult() {
   }
 
   // =================================================
-  // Space curve — vector field
+  // Space curve — vector field — dx dy dz
   // =================================================
-  if (curveType === "space" && fieldType === "vector") {
+  if (
+    curveType === "space" &&
+    fieldType === "vector" &&
+    (methodType === "dxyz" || methodType === "coord")
+  ) {
     formula = `
-    $$\\int_C \\mathbf{F}\\cdot d\\mathbf{r}
+    $$\\int_C P(x,y,z)\\,dx + Q(x,y,z)\\,dy + R(x,y,z)\\,dz
     =
-    \\int_C P\\,dx + Q\\,dy + R\\,dz
-    =
-    \\int_a^b (P x' + Q y' + R z')\\,dt$$
+    \\int_a^b \\Big(
+      P(x(t),y(t),z(t))\\,x'(t)
+      + Q(x(t),y(t),z(t))\\,y'(t)
+      + R(x(t),y(t),z(t))\\,z'(t)
+    \\Big)dt$$
     `;
-
     explanationHTML = `
-      This line integral represents the work done by the vector field
-      <span class="math">\\(\\langle P,Q,R \\rangle\\)</span>
-      along the space curve.
+      This is the work integral of a vector field along a space curve,
+      computed using coordinate differentials.
     `;
   }
 
