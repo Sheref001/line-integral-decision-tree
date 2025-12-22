@@ -17,17 +17,16 @@ function chooseCurve(type) {
 function chooseField(type) {
   fieldType = type;
 
-  // Always hide method step first
   document.getElementById("step-method").classList.add("hidden");
 
-  // Scalar fields: choose integration method
-  if (fieldType === "scalar") {
+  // Scalar fields: method choice only meaningful in the plane
+  if (fieldType === "scalar" && curveType === "plane") {
     document.getElementById("step-method").classList.remove("hidden");
   }
 
-  // Vector fields: no method choice
-  if (fieldType === "vector") {
-    methodType = "";
+  // Vector fields OR space scalar fields: go directly to result
+  if (fieldType === "vector" || (fieldType === "scalar" && curveType === "space")) {
+    methodType = "ds"; // force correct behavior
     showResult();
   }
 }
@@ -38,7 +37,7 @@ function chooseMethod(type) {
 }
 
 // ------------------------------------------------
-// Result logic (TikZ-faithful and robust)
+// Result logic (TikZ-faithful + pedagogically correct)
 // ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
@@ -48,33 +47,29 @@ function showResult() {
   let formula = "";
   let explanationHTML = "";
 
-  // Reset special case
   naturalDiv.classList.add("hidden");
   naturalDiv.innerHTML = "";
 
   // =================================================
-  // Plane curve R^2 — scalar field f(x,y), arc length
+  // Plane curve — scalar field — arc length
   // =================================================
-  if (
-    curveType === "plane" &&
-    fieldType === "scalar" &&
-    methodType === "ds"
-  ) {
+  if (curveType === "plane" && fieldType === "scalar" && methodType === "ds") {
     formula = `
     $$\\int_C f(x,y)\\,ds
     =
     \\int_a^b f(x(t),y(t))
-    \\sqrt{(x')^2+(y')^2}\\,dt$$
+    \\sqrt{\\left(\\frac{dx}{dt}\\right)^2
+          +\\left(\\frac{dy}{dt}\\right)^2}\\,dt$$
     `;
     explanationHTML = `
       This integral measures the accumulation of the scalar field
       <span class="math">\\(f(x,y)\\)</span>
       along the curve itself. The element
       <span class="math">\\(ds\\)</span>
-      accounts for the geometry of the curve.
+      accounts for the geometry of the path.
     `;
 
-    // Natural parametrization
+    // Natural parametrization (plane only)
     naturalDiv.innerHTML = `
       <b>Special case: natural parametrization</b><br><br>
       $$\\text{If } y=g(x):\\quad
@@ -90,24 +85,23 @@ function showResult() {
   }
 
   // =================================================
-  // Plane curve R^2 — scalar field f(x,y), dx / dy
-  // ACCEPTS "coord" OR "dxdy"
+  // Plane curve — scalar field — dx / dy
   // =================================================
   if (
     curveType === "plane" &&
     fieldType === "scalar" &&
-    (methodType === "coord" || methodType === "dxdy")
+    (methodType === "dxdy" || methodType === "coord")
   ) {
     formula = `
     $$\\begin{aligned}
     \\int_C f(x,y)\\,dx
-    &= \\int_a^b f(x(t),y(t))\\,x'(t)\\,dt,\\\\[6pt]
+    &= \\int_a^b f(x(t),y(t))\\frac{dx}{dt}\\,dt,\\\\[6pt]
     \\int_C f(x,y)\\,dy
-    &= \\int_a^b f(x(t),y(t))\\,y'(t)\\,dt
+    &= \\int_a^b f(x(t),y(t))\\frac{dy}{dt}\\,dt
     \\end{aligned}$$
     `;
     explanationHTML = `
-      These formulas follow from parametrizing the curve as
+      These formulas are obtained by parametrizing the curve
       <span class="math">\\(x=x(t),\\;y=y(t)\\)</span>
       and expressing the coordinate differentials
       <span class="math">\\(dx,dy\\)</span>
@@ -117,7 +111,7 @@ function showResult() {
   }
 
   // =================================================
-  // Plane curve R^2 — vector field <P,Q>
+  // Plane curve — vector field
   // =================================================
   if (curveType === "plane" && fieldType === "vector") {
     formula = `
@@ -130,35 +124,33 @@ function showResult() {
     explanationHTML = `
       This line integral represents the work done by the vector field
       <span class="math">\\(\\langle P,Q \\rangle\\)</span>
-      along the plane curve, computed using coordinate differentials.
+      along the plane curve.
     `;
   }
 
   // =================================================
-  // Space curve R^3 — scalar field f(x,y,z)
+  // Space curve — scalar field (PARAMETRIC ONLY)
   // =================================================
-  if (
-    curveType === "space" &&
-    fieldType === "scalar" &&
-    methodType === "ds"
-  ) {
+  if (curveType === "space" && fieldType === "scalar") {
     formula = `
     $$\\int_C f(x,y,z)\\,ds
     =
-    \\int_a^b f(x(t),y(t),z(t))
-    \\sqrt{(x')^2+(y')^2+(z')^2}\\,dt$$
+    \\int_a^b
+    f(x(t),y(t),z(t))
+    \\sqrt{\\left(\\frac{dx}{dt}\\right)^2
+          +\\left(\\frac{dy}{dt}\\right)^2
+          +\\left(\\frac{dz}{dt}\\right)^2}\\,dt$$
     `;
     explanationHTML = `
-      The scalar field
-      <span class="math">\\(f(x,y,z)\\)</span>
-      is accumulated along the space curve, with
-      <span class="math">\\(ds\\)</span>
-      capturing the geometry in three dimensions.
+      For space curves, scalar line integrals are almost always computed
+      using a parametrization.
+      Unlike plane curves, space curves are rarely described as graphs
+      of functions.
     `;
   }
 
   // =================================================
-  // Space curve R^3 — vector field <P,Q,R>
+  // Space curve — vector field
   // =================================================
   if (curveType === "space" && fieldType === "vector") {
     formula = `
@@ -171,8 +163,7 @@ function showResult() {
     explanationHTML = `
       This line integral represents the work done by the vector field
       <span class="math">\\(\\langle P,Q,R \\rangle\\)</span>
-      along the space curve, computed using coordinate differentials
-      <span class="math">\\(dx,dy,dz\\)</span>.
+      along the space curve.
     `;
   }
 
@@ -181,7 +172,7 @@ function showResult() {
   explanationDiv.innerHTML = explanationHTML;
   document.getElementById("result").classList.remove("hidden");
 
-  // MathJax re-render
+  // MathJax render
   if (window.MathJax) {
     MathJax.typesetClear([formulaDiv, explanationDiv, naturalDiv]);
     MathJax.typesetPromise([formulaDiv, explanationDiv, naturalDiv]);
