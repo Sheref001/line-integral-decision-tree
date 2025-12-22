@@ -138,9 +138,9 @@ function showResult() {
   // Space scalar — dx, dy, dz
   if (curveType === "space" && fieldType === "scalar" && methodType === "dxyz") {
     formula = `
-    $$\\int\limits_C f\\,dx = \\int f x' dt$$
-    $$\\int\limits_C f\\,dy = \\int f y' dt$$
-    $$\\int\limits_C f\\,dz = \\int f z' dt$$
+    $$\\int\limits_C f(x,y,z)\\,dx = \\int f(x(t),y(t),z(t)) x' dt$$
+    $$\\int\limits_C f(x,y,z)\\,dy = \\int f(x(t),y(t),z(t)) y' dt$$
+    $$\\int\limits_C f(x,y,z)\\,dz = \\int f(x(t),y(t),z(t)) z' dt$$
     `;
     explanationHTML = `Coordinate-based scalar integrals in space.`;
   }
