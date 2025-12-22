@@ -86,7 +86,7 @@ function showResult() {
   // Plane scalar — ds
   if (curveType === "plane" && fieldType === "scalar" && methodType === "ds") {
     formula = `
-    $$\\int\limits_C f(x,y)\\,ds
+    $$\\int_C f(x,y)\\,ds
     =
     \\int_a^b f(x(t),y(t))
     \\sqrt{(x')^2+(y')^2}\\,dt$$
@@ -108,8 +108,8 @@ function showResult() {
     methodType === "dxdy"
   ) {
     formula = `
-    $$\\int\limits_C f(x,y)\\,dx = \\int f(x(t),y(t))x'(t)dt$$
-    $$\\int\limits_C f(x,y)\\,dy = \\int f(x(t),y(t))y'(t)dt$$
+    $$\\int_C f(x,y)\\,dx = \\int f(x(t),y(t))x'(t)dt$$
+    $$\\int_C f(x,y)\\,dy = \\int f(x(t),y(t))y'(t)dt$$
     `;
     explanationHTML = `Scalar line integrals via coordinate differentials.`;
   }
@@ -117,7 +117,7 @@ function showResult() {
   // Plane vector
   if (curveType === "plane" && fieldType === "vector") {
     formula = `
-    $$\\int\limits_C P(x,y)\\,dx+Q(x,y)\\,dy
+    $$\\int_C P(x,y)\\,dx+Q(x,y)\\,dy
     =
     \\int_a^b (P(x(t),y(t))x'+Q(x(t),y(t))y')dt$$
     `;
@@ -127,7 +127,7 @@ function showResult() {
   // Space scalar — ds
   if (curveType === "space" && fieldType === "scalar" && methodType === "ds") {
     formula = `
-    $$\\int\limits_C f(x,y,z)\\,ds
+    $$\\int_C f(x,y,z)\\,ds
     =
     \\int_a^b f(x(t),y(t),z(t))
     \\sqrt{(x')^2+(y')^2+(z')^2}dt$$
@@ -138,9 +138,9 @@ function showResult() {
   // Space scalar — dx, dy, dz
   if (curveType === "space" && fieldType === "scalar" && methodType === "dxyz") {
     formula = `
-    $$\\int\limits_C f(x,y,z)\\,dx = \\int f(x(t),y(t),z(t)) x' dt$$
-    $$\\int\limits_C f(x,y,z)\\,dy = \\int f(x(t),y(t),z(t)) y' dt$$
-    $$\\int\limits_C f(x,y,z)\\,dz = \\int f(x(t),y(t),z(t)) z' dt$$
+    $$\\int_C f(x,y,z)\\,dx = \\int f(x(t),y(t),z(t)) x' dt$$
+    $$\\int_C f(x,y,z)\\,dy = \\int f(x(t),y(t),z(t)) y' dt$$
+    $$\\int_C f(x,y,z)\\,dz = \\int f(x(t),y(t),z(t)) z' dt$$
     `;
     explanationHTML = `Coordinate-based scalar integrals in space.`;
   }
@@ -148,7 +148,7 @@ function showResult() {
   // Space vector
   if (curveType === "space" && fieldType === "vector" && methodType === "dxyz") {
     formula = `
-    $$\\int\limits_C P\\,dx+Q\\,dy+R\\,dz
+    $$\\int_C P\\,dx+Q\\,dy+R\\,dz
     =
     \\int_a^b (Px'+Qy'+Rz')dt$$
     `;
