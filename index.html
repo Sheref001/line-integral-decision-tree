@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Line Integral Decision Tree</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Line Integral Decision Tree</h1>
+<p>Select answers step by step to find the correct formula.</p>
+
+<div id="tree">
+
+  <div class="step" id="step-curve">
+    <h2>1. What kind of curve?</h2>
+    <button onclick="chooseCurve('plane')">Plane curve (ℝ²)</button>
+    <button onclick="chooseCurve('space')">Space curve (ℝ³)</button>
+  </div>
+
+  <div class="step hidden" id="step-field">
+    <h2>2. What kind of field?</h2>
+    <button onclick="chooseField('scalar')">Scalar field</button>
+    <button onclick="chooseField('vector')">Vector field</button>
+  </div>
+
+  <div class="step hidden" id="step-method">
+    <h2>3. How do you integrate?</h2>
+    <button onclick="chooseMethod('ds')">With respect to arc length (ds)</button>
+    <button onclick="chooseMethod('coord')">With respect to coordinates</button>
+  </div>
+
+  <div class="step hidden" id="result">
+    <h2>Correct Formula</h2>
+    <div id="formula"></div>
+    <button onclick="resetTree()">Start over</button>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
