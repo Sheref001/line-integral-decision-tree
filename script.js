@@ -117,9 +117,9 @@ function showResult() {
   // Plane vector
   if (curveType === "plane" && fieldType === "vector") {
     formula = `
-    $$\\int\limits_C P\\,dx+Q\\,dy
+    $$\\int\limits_C P(x,y)\\,dx+Q(x,y)\\,dy
     =
-    \\int_a^b (Px'+Qy')dt$$
+    \\int_a^b (P(x(t),y(t))x'+Q(x(t),y(t))y')dt$$
     `;
     explanationHTML = `Work integral in the plane.`;
   }
