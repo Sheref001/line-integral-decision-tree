@@ -131,7 +131,7 @@ function showResult() {
   // =================================================
   // Space curve — scalar field (PARAMETRIC ONLY)
   // =================================================
-  if (curveType === "space" && fieldType === "scalar") {
+  if (curveType === "space" && fieldType === "scalar" && && methodType === "ds") {
     formula = `
     $$\\int_C f(x,y,z)\\,ds
     =
