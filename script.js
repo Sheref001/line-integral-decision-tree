@@ -26,7 +26,7 @@ function chooseField(type) {
     document.getElementById("step-method").classList.remove("hidden");
   }
 
-  // Vector fields: no choice
+  // Vector fields: no method choice
   if (fieldType === "vector") {
     methodType = "";
     showResult();
@@ -39,7 +39,7 @@ function chooseMethod(type) {
 }
 
 // ------------------------------------------------
-// Result logic (faithful to TikZ notation)
+// Result logic (faithful to TikZ + MathJax-safe)
 // ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
@@ -64,7 +64,7 @@ function showResult() {
     \\sqrt{(x')^2+(y')^2}\\,dt$$
     `;
     explanation =
-      "This integral measures the accumulation of the scalar field f(x,y) along the curve itself. The element ds accounts for the geometry of the curve.";
+      "This integral measures the accumulation of the scalar field \\(f(x,y)\\) along the curve itself. The element \\(ds\\) accounts for the geometry of the curve.";
 
     // Natural parametrization (special case)
     naturalDiv.innerHTML = `
@@ -88,7 +88,7 @@ function showResult() {
     \\int_C f(x,y)\\,dy$$
     `;
     explanation =
-      "Here the scalar field f(x,y) is accumulated relative to a chosen coordinate direction rather than intrinsic arc length.";
+      "Here the scalar field \\(f(x,y)\\) is accumulated relative to a chosen coordinate direction rather than intrinsic arc length.";
   }
 
   // =================================================
@@ -103,7 +103,7 @@ function showResult() {
     \\int_a^b (P x' + Q y')\\,dt$$
     `;
     explanation =
-      "The dot product extracts the component of the vector field \\(\\langle P,Q\\rangle\\) tangent to the curve. This integral represents work along the path.";
+      "This line integral represents the work done by the vector field \\(\\langle P,Q \\rangle\\) along the plane curve, computed using coordinate differentials.";
   }
 
   // =================================================
@@ -117,7 +117,7 @@ function showResult() {
     \\sqrt{(x')^2+(y')^2+(z')^2}\\,dt$$
     `;
     explanation =
-      "The scalar field f(x,y,z) is accumulated along the space curve, with ds capturing the geometry in three dimensions.";
+      "The scalar field \\(f(x,y,z)\\) is accumulated along the space curve, with \\(ds\\) capturing the geometry in three dimensions.";
   }
 
   // =================================================
@@ -132,18 +132,18 @@ function showResult() {
     \\int_a^b (P x' + Q y' + R z')\\,dt$$
     `;
     explanation =
-      "This line integral sums the tangential component of the vector field \\(\\langle P,Q,R\\rangle\\) along the space curve.";
+      "This line integral represents the work done by the vector field \\(\\langle P,Q,R \\rangle\\) along the space curve, computed using coordinate differentials \\(dx,dy,dz\\).";
   }
 
-  // Inject content
+  // Inject content (IMPORTANT: innerHTML for LaTeX)
   formulaDiv.innerHTML = formula;
-  explanationDiv.innerText = explanation;
+  explanationDiv.innerHTML = explanation;
   document.getElementById("result").classList.remove("hidden");
 
-  // MathJax re-render
+  // Force MathJax rendering on all math-containing nodes
   if (window.MathJax) {
-    MathJax.typesetClear([formulaDiv, naturalDiv]);
-    MathJax.typesetPromise([formulaDiv, naturalDiv]);
+    MathJax.typesetClear([formulaDiv, explanationDiv, naturalDiv]);
+    MathJax.typesetPromise([formulaDiv, explanationDiv, naturalDiv]);
   }
 }
 
@@ -165,7 +165,7 @@ function resetTree() {
   document.getElementById("step-curve").classList.remove("hidden");
 
   document.getElementById("formula").innerHTML = "";
-  document.getElementById("explanation").innerText = "";
+  document.getElementById("explanation").innerHTML = "";
   document.getElementById("natural-param").innerHTML = "";
   document.getElementById("natural-param").classList.add("hidden");
 }
