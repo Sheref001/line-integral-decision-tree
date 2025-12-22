@@ -15,7 +15,16 @@ function chooseCurve(type) {
 
 function chooseField(type) {
   fieldType = type;
-  document.getElementById("step-method").classList.remove("hidden");
+
+  // Scalar fields: student must choose how to integrate
+  if (fieldType === "scalar") {
+    document.getElementById("step-method").classList.remove("hidden");
+  }
+
+  // Vector fields: no choice — always coordinate differentials
+  if (fieldType === "vector") {
+    showResult();
+  }
 }
 
 function chooseMethod(type) {
@@ -24,13 +33,15 @@ function chooseMethod(type) {
 }
 
 // ------------------------------------------------
-// Result logic (MathJax-safe)
+// Result logic (MathJax-safe and mathematically correct)
 // ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
   let formula = "";
 
-  // Plane curve + scalar field + arc length
+  // ----------------------------------------------
+  // Plane curve — scalar field
+  // ----------------------------------------------
   if (curveType === "plane" && fieldType === "scalar" && methodType === "ds") {
     formula = `
     $$\\int_C f\\,ds
@@ -40,7 +51,6 @@ function showResult() {
     `;
   }
 
-  // Plane curve + scalar field + coordinate
   if (curveType === "plane" && fieldType === "scalar" && methodType === "coord") {
     formula = `
     $$\\int_C f\\,dx
@@ -49,7 +59,9 @@ function showResult() {
     `;
   }
 
-  // Plane curve + vector field
+  // ----------------------------------------------
+  // Plane curve — vector field
+  // ----------------------------------------------
   if (curveType === "plane" && fieldType === "vector") {
     formula = `
     $$\\int_C \\mathbf{F}\\cdot d\\mathbf{r}
@@ -60,8 +72,10 @@ function showResult() {
     `;
   }
 
-  // Space curve + scalar field
-  if (curveType === "space" && fieldType === "scalar") {
+  // ----------------------------------------------
+  // Space curve — scalar field
+  // ----------------------------------------------
+  if (curveType === "space" && fieldType === "scalar" && methodType === "ds") {
     formula = `
     $$\\int_C f\\,ds
     =
@@ -70,7 +84,9 @@ function showResult() {
     `;
   }
 
-  // Space curve + vector field
+  // ----------------------------------------------
+  // Space curve — vector field
+  // ----------------------------------------------
   if (curveType === "space" && fieldType === "vector") {
     formula = `
     $$\\int_C \\mathbf{F}\\cdot d\\mathbf{r}
@@ -85,9 +101,7 @@ function showResult() {
   formulaDiv.innerHTML = formula;
   document.getElementById("result").classList.remove("hidden");
 
-  // ------------------------------------------------
-  // Force MathJax to typeset dynamic content
-  // ------------------------------------------------
+  // Force MathJax to typeset dynamically inserted math
   if (window.MathJax) {
     MathJax.typesetClear([formulaDiv]);
     MathJax.typesetPromise([formulaDiv]);
