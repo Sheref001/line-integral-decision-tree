@@ -126,9 +126,9 @@ function showResult() {
   // =================================================
   if (curveType === "space" && fieldType === "vector") {
     formula = `
-    $$\\int_C \\mathbf{F}\\cdot d\\mathbf{r}
+    $$\\int\limits_C \\mathbf{F}\\cdot d\\mathbf{r}
     =
-    \\int_C P\\,dx + Q\\,dy + R\\,dz
+    \\int\limits_C P\\,dx + Q\\,dy + R\\,dz
     =
     \\int_a^b (P x' + Q y' + R z')\\,dt$$
     `;
