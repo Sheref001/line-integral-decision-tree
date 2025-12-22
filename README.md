@@ -42,4 +42,5 @@ No installation, login, or prior setup is required.
 ## 🚀 Live Version
 
 Once GitHub Pages is enabled, the tool is available at:
+https://sheref001.github.io/line-integral-decision-tree/
 
