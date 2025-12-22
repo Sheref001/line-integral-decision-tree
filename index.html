@@ -1,83 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Line Integral Decision Tree</title>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Styling -->
+  <link rel="stylesheet" href="style.css" />
 
-  <!-- MathJax configuration MUST come before loading MathJax -->
+  <!-- MathJax -->
   <script>
     window.MathJax = {
       tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        inlineMath: [['\\(', '\\)']],
         displayMath: [['$$', '$$']]
-      },
-      options: {
-        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
       }
     };
   </script>
-
-  <!-- MathJax -->
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
 <body>
 
-<h1>Line Integral Decision Tree</h1>
-<p>Select answers step by step to determine the correct line integral formula.</p>
+  <h1>Decision Tree for Line Integrals</h1>
 
-<!-- =========================================================
-     STEP 1: Curve type
-========================================================= -->
-<div class="step" id="step-curve">
-  <h2>1. What kind of curve?</h2>
-  <button onclick="chooseCurve('plane')">Plane curve &nbsp; \( \mathbb{R}^2 \)</button>
-  <button onclick="chooseCurve('space')">Space curve &nbsp; \( \mathbb{R}^3 \)</button>
-</div>
+  <!-- ========================= -->
+  <!-- STEP 1: Curve Type -->
+  <!-- ========================= -->
+  <div id="step-curve" class="step">
+    <h2>1. What type of curve is \(C\)?</h2>
+    <button onclick="chooseCurve('plane')">Plane curve \( \mathbb{R}^2 \)</button>
+    <button onclick="chooseCurve('space')">Space curve \( \mathbb{R}^3 \)</button>
+  </div>
 
-<!-- =========================================================
-     STEP 2: Field type
-========================================================= -->
-<div class="step hidden" id="step-field">
-  <h2>2. What kind of field?</h2>
-  <button onclick="chooseField('scalar')">Scalar field</button>
-  <button onclick="chooseField('vector')">Vector field</button>
-</div>
+  <!-- ========================= -->
+  <!-- STEP 2: Field Type -->
+  <!-- ========================= -->
+  <div id="step-field" class="step hidden">
+    <h2>2. What type of field?</h2>
+    <button onclick="chooseField('scalar')">Scalar field</button>
+    <button onclick="chooseField('vector')">Vector field</button>
+  </div>
 
-<!-- =========================================================
-     STEP 3: Method (SCALAR FIELDS ONLY)
-========================================================= -->
-<div class="step hidden" id="step-method">
-  <h2>3. What are you integrating with respect to?</h2>
-  <button onclick="chooseMethod('ds')">Arc length \( ds \)</button>
-  <button onclick="chooseMethod('coord')">Coordinates \( dx, dy \) (or \( dz \))</button>
-</div>
+  <!-- ========================= -->
+  <!-- STEP 3: What are you integrating with respect to? -->
+  <!-- ========================= -->
+  <div id="step-method" class="step hidden">
+    <h2>3. What are you integrating with respect to?</h2>
 
-<!-- =========================================================
-     RESULT
-========================================================= -->
-<div class="step hidden" id="result">
-  <h2>Correct Formula</h2>
+    <!-- Arc length -->
+    <button onclick="chooseMethod('ds')">Arc length \( ds \)</button>
 
-  <!-- Main formula -->
-  <div id="formula"></div>
+    <!-- Plane coordinates -->
+    <button onclick="chooseMethod('dxdy')">Coordinates \( dx, dy \)</button>
 
-  <!-- Why this works -->
-  <div id="explanation" style="margin-top:15px; font-style:italic;"></div>
+    <!-- Space coordinates -->
+    <button onclick="chooseMethod('dxyz')">Coordinates \( dx, dy, dz \)</button>
+  </div>
 
-  <!-- Natural parametrization (special case) -->
-  <div id="natural-param" class="hidden" style="margin-top:20px;"></div>
+  <!-- ========================= -->
+  <!-- RESULT -->
+  <!-- ========================= -->
+  <div id="result" class="step hidden">
+    <h2>Result</h2>
 
-  <button onclick="resetTree()">Start over</button>
-</div>
+    <div id="formula" class="formula-box"></div>
 
-<!-- =========================================================
-     JavaScript (loaded LAST)
-========================================================= -->
-<script src="script.js"></script>
+    <div id="natural-param" class="natural-box hidden"></div>
+
+    <div id="explanation" class="explanation-box"></div>
+
+    <button onclick="resetTree()">Start over</button>
+  </div>
+
+  <!-- Script -->
+  <script src="script.js"></script>
 
 </body>
 </html>
