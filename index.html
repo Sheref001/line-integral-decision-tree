@@ -3,54 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <title>Line Integral Decision Tree</title>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- MathJax configuration MUST come before loading MathJax -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+
+  <!-- MathJax -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
+
 <body>
 
 <h1>Line Integral Decision Tree</h1>
-<p>Select answers step by step to find the correct formula.</p>
+<p>Select answers step by step to determine the correct line integral formula.</p>
 
-<div id="tree">
-
-  <div class="step" id="step-curve">
-    <h2>1. What kind of curve?</h2>
-    <button onclick="chooseCurve('plane')">Plane curve (ℝ²)</button>
-    <button onclick="chooseCurve('space')">Space curve (ℝ³)</button>
-  </div>
-
-  <div class="step hidden" id="step-field">
-    <h2>2. What kind of field?</h2>
-    <button onclick="chooseField('scalar')">Scalar field</button>
-    <button onclick="chooseField('vector')">Vector field</button>
-  </div>
-
-  <div class="step hidden" id="step-method">
-    <h2>3. How do you integrate?</h2>
-    <button onclick="chooseMethod('ds')">With respect to arc length (ds)</button>
-    <button onclick="chooseMethod('coord')">With respect to coordinates</button>
-  </div>
-
-  <div class="step hidden" id="result">
-    <h2>Correct Formula</h2>
-    <div id="formula"></div>
-    <button onclick="resetTree()">Start over</button>
-  </div>
-
+<!-- =========================================================
+     STEP 1: Curve type
+========================================================= -->
+<div class="step" id="step-curve">
+  <h2>1. What kind of curve?</h2>
+  <button onclick="chooseCurve('plane')">Plane curve &nbsp; \( \mathbb{R}^2 \)</button>
+  <button onclick="chooseCurve('space')">Space curve &nbsp; \( \mathbb{R}^3 \)</button>
 </div>
 
-<script>
-  window.MathJax = {
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']],
-      displayMath: [['$$', '$$']]
-    }
-  };
-</script>
+<!-- =========================================================
+     STEP 2: Field type
+========================================================= -->
+<div class="step hidden" id="step-field">
+  <h2>2. What kind of field?</h2>
+  <button onclick="chooseField('scalar')">Scalar field</button>
+  <button onclick="chooseField('vector')">Vector field</button>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<!-- =========================================================
+     STEP 3: Method (SCALAR FIELDS ONLY)
+========================================================= -->
+<div class="step hidden" id="step-method">
+  <h2>3. What are you integrating with respect to?</h2>
+  <button onclick="chooseMethod('ds')">Arc length \( ds \)</button>
+  <button onclick="chooseMethod('coord')">Coordinates \( dx, dy \) (or \( dz \))</button>
+</div>
 
+<!-- =========================================================
+     RESULT
+========================================================= -->
+<div class="step hidden" id="result">
+  <h2>Correct Formula</h2>
+
+  <!-- Main formula -->
+  <div id="formula"></div>
+
+  <!-- Why this works -->
+  <div id="explanation" style="margin-top:15px; font-style:italic;"></div>
+
+  <!-- Natural parametrization (special case) -->
+  <div id="natural-param" class="hidden" style="margin-top:20px;"></div>
+
+  <button onclick="resetTree()">Start over</button>
+</div>
+
+<!-- =========================================================
+     JavaScript (loaded LAST)
+========================================================= -->
 <script src="script.js"></script>
-
 
 </body>
 </html>
