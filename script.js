@@ -16,12 +16,16 @@ function chooseCurve(type) {
 
 function chooseField(type) {
   fieldType = type;
+
+  // Always hide method step first
   document.getElementById("step-method").classList.add("hidden");
 
+  // Scalar fields: choose integration method
   if (fieldType === "scalar") {
     document.getElementById("step-method").classList.remove("hidden");
   }
 
+  // Vector fields: no method choice
   if (fieldType === "vector") {
     methodType = "";
     showResult();
@@ -34,7 +38,7 @@ function chooseMethod(type) {
 }
 
 // ------------------------------------------------
-// Result logic (MathJax-safe, notation-faithful)
+// Result logic (exactly matching TikZ)
 // ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
@@ -44,11 +48,12 @@ function showResult() {
   let formula = "";
   let explanationHTML = "";
 
+  // Reset special case
   naturalDiv.classList.add("hidden");
   naturalDiv.innerHTML = "";
 
   // =================================================
-  // Plane curve — scalar field f(x,y)
+  // Plane curve R^2 — scalar field f(x,y), arc length
   // =================================================
   if (curveType === "plane" && fieldType === "scalar" && methodType === "ds") {
     formula = `
@@ -65,6 +70,7 @@ function showResult() {
       accounts for the geometry of the curve.
     `;
 
+    // Natural parametrization (special case)
     naturalDiv.innerHTML = `
       <b>Special case: natural parametrization</b><br><br>
       $$\\text{If } y=g(x):\\quad
@@ -80,7 +86,30 @@ function showResult() {
   }
 
   // =================================================
-  // Plane curve — vector field <P,Q>
+  // Plane curve R^2 — scalar field f(x,y), dx / dy
+  // (FULL TikZ formulas — NOT naive)
+  // =================================================
+  if (curveType === "plane" && fieldType === "scalar" && methodType === "coord") {
+    formula = `
+    $$\\begin{aligned}
+    \\int_C f(x,y)\\,dx
+    &= \\int_a^b f(x(t),y(t))\\,x'(t)\\,dt,\\\\[6pt]
+    \\int_C f(x,y)\\,dy
+    &= \\int_a^b f(x(t),y(t))\\,y'(t)\\,dt
+    \\end{aligned}$$
+    `;
+    explanationHTML = `
+      These formulas follow from parametrizing the curve as
+      <span class="math">\\(x=x(t),\\;y=y(t)\\)</span>
+      and expressing the coordinate differentials
+      <span class="math">\\(dx,dy\\)</span>
+      in terms of
+      <span class="math">\\(dt\\)</span>.
+    `;
+  }
+
+  // =================================================
+  // Plane curve R^2 — vector field <P,Q>
   // =================================================
   if (curveType === "plane" && fieldType === "vector") {
     formula = `
@@ -98,7 +127,26 @@ function showResult() {
   }
 
   // =================================================
-  // Space curve — vector field <P,Q,R>
+  // Space curve R^3 — scalar field f(x,y,z), arc length
+  // =================================================
+  if (curveType === "space" && fieldType === "scalar" && methodType === "ds") {
+    formula = `
+    $$\\int_C f(x,y,z)\\,ds
+    =
+    \\int_a^b f(x(t),y(t),z(t))
+    \\sqrt{(x')^2+(y')^2+(z')^2}\\,dt$$
+    `;
+    explanationHTML = `
+      The scalar field
+      <span class="math">\\(f(x,y,z)\\)</span>
+      is accumulated along the space curve, with
+      <span class="math">\\(ds\\)</span>
+      capturing the geometry in three dimensions.
+    `;
+  }
+
+  // =================================================
+  // Space curve R^3 — vector field <P,Q,R>
   // =================================================
   if (curveType === "space" && fieldType === "vector") {
     formula = `
@@ -116,12 +164,12 @@ function showResult() {
     `;
   }
 
-  // Inject content
+  // Inject content (innerHTML required for LaTeX)
   formulaDiv.innerHTML = formula;
   explanationDiv.innerHTML = explanationHTML;
   document.getElementById("result").classList.remove("hidden");
 
-  // Force MathJax rendering (robust)
+  // Force MathJax rendering
   if (window.MathJax) {
     MathJax.typesetClear([formulaDiv, explanationDiv, naturalDiv]);
     MathJax.typesetPromise([formulaDiv, explanationDiv, naturalDiv]);
