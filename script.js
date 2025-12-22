@@ -17,28 +17,50 @@ function chooseCurve(type) {
 function chooseField(type) {
   fieldType = type;
 
-  // Hide method step by default
-  document.getElementById("step-method").classList.add("hidden");
+  const stepMethod = document.getElementById("step-method");
 
-  // Plane scalar: choose ds or dx/dy
-  if (fieldType === "scalar" && curveType === "plane") {
-    document.getElementById("step-method").classList.remove("hidden");
+  // Hide method step and all buttons first
+  stepMethod.classList.add("hidden");
+  document.getElementById("btn-ds").classList.add("hidden");
+  document.getElementById("btn-dxdy").classList.add("hidden");
+  document.getElementById("btn-dxyz").classList.add("hidden");
+
+  // -------------------------------
+  // Plane curve
+  // -------------------------------
+  if (curveType === "plane") {
+
+    // Plane + scalar: ds OR dx, dy
+    if (fieldType === "scalar") {
+      stepMethod.classList.remove("hidden");
+      document.getElementById("btn-ds").classList.remove("hidden");
+      document.getElementById("btn-dxdy").classList.remove("hidden");
+    }
+
+    // Plane + vector: direct result (dx, dy)
+    if (fieldType === "vector") {
+      methodType = "coord";
+      showResult();
+    }
   }
 
-  // Space scalar: choose ds or dx/dy/dz
-  if (fieldType === "scalar" && curveType === "space") {
-    document.getElementById("step-method").classList.remove("hidden");
-  }
+  // -------------------------------
+  // Space curve
+  // -------------------------------
+  if (curveType === "space") {
 
-  // Plane vector: go directly to result
-  if (fieldType === "vector" && curveType === "plane") {
-    methodType = "coord";
-    showResult();
-  }
+    // Space + scalar: ds OR dx, dy, dz
+    if (fieldType === "scalar") {
+      stepMethod.classList.remove("hidden");
+      document.getElementById("btn-ds").classList.remove("hidden");
+      document.getElementById("btn-dxyz").classList.remove("hidden");
+    }
 
-  // Space vector: choose dx/dy/dz
-  if (fieldType === "vector" && curveType === "space") {
-    document.getElementById("step-method").classList.remove("hidden");
+    // Space + vector: dx, dy, dz
+    if (fieldType === "vector") {
+      stepMethod.classList.remove("hidden");
+      document.getElementById("btn-dxyz").classList.remove("hidden");
+    }
   }
 }
 
@@ -48,7 +70,7 @@ function chooseMethod(type) {
 }
 
 // ------------------------------------------------
-// Result logic
+// Result logic (unchanged)
 // ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
@@ -58,152 +80,85 @@ function showResult() {
   let formula = "";
   let explanationHTML = "";
 
-  // Reset special case
   naturalDiv.classList.add("hidden");
   naturalDiv.innerHTML = "";
 
-  // =================================================
-  // Plane curve — scalar field — arc length ds
-  // =================================================
+  // Plane scalar — ds
   if (curveType === "plane" && fieldType === "scalar" && methodType === "ds") {
     formula = `
     $$\\int_C f(x,y)\\,ds
     =
     \\int_a^b f(x(t),y(t))
-    \\sqrt{\\left(\\frac{dx}{dt}\\right)^2
-          +\\left(\\frac{dy}{dt}\\right)^2}\\,dt$$
+    \\sqrt{(x')^2+(y')^2}\\,dt$$
     `;
-    explanationHTML = `
-      This integral accumulates the scalar field
-      <span class="math">\\(f(x,y)\\)</span>
-      along the curve itself. The element
-      <span class="math">\\(ds\\)</span>
-      accounts for the geometry of the path.
-    `;
+    explanationHTML = `Scalar accumulation along a plane curve.`;
 
     naturalDiv.innerHTML = `
       <b>Special case: natural parametrization</b><br><br>
-      $$\\text{If } y=g(x):\\;
-      \\int_C f(x,y)\\,ds
-      =
-      \\int_a^b f(x,g(x))\\sqrt{1+(g'(x))^2}\\,dx$$
-      $$\\text{If } x=h(y):\\;
-      \\int_C f(x,y)\\,ds
-      =
-      \\int_a^b f(h(y),y)\\sqrt{1+(h'(y))^2}\\,dy$$
+      $$y=g(x):\\; \\int f(x,g(x))\\sqrt{1+(g')^2}\\,dx$$
+      $$x=h(y):\\; \\int f(h(y),y)\\sqrt{1+(h')^2}\\,dy$$
     `;
     naturalDiv.classList.remove("hidden");
   }
 
-  // =================================================
-  // Plane curve — scalar field — dx / dy
-  // =================================================
+  // Plane scalar — dx, dy
   if (
     curveType === "plane" &&
     fieldType === "scalar" &&
-    (methodType === "dxdy" || methodType === "coord")
+    methodType === "dxdy"
   ) {
     formula = `
-    $$\\begin{aligned}
-    \\int_C f(x,y)\\,dx
-    &= \\int_a^b f(x(t),y(t))\\frac{dx}{dt}\\,dt,\\\\[6pt]
-    \\int_C f(x,y)\\,dy
-    &= \\int_a^b f(x(t),y(t))\\frac{dy}{dt}\\,dt
-    \\end{aligned}$$
+    $$\\int_C f\\,dx = \\int f(x(t),y(t))x'(t)dt$$
+    $$\\int_C f\\,dy = \\int f(x(t),y(t))y'(t)dt$$
     `;
-    explanationHTML = `
-      These formulas follow from parametrizing the curve as
-      <span class="math">\\(x=x(t),\\;y=y(t)\\)</span>
-      and expressing the coordinate differentials
-      <span class="math">\\(dx,dy\\)</span>
-      in terms of
-      <span class="math">\\(dt\\)</span>.
-    `;
+    explanationHTML = `Scalar line integrals via coordinate differentials.`;
   }
 
-  // =================================================
-  // Plane curve — vector field
-  // =================================================
+  // Plane vector
   if (curveType === "plane" && fieldType === "vector") {
     formula = `
-    $$\\int_C \\mathbf{F}\\cdot d\\mathbf{r}
+    $$\\int_C P\\,dx+Q\\,dy
     =
-    \\int_C P\\,dx + Q\\,dy
-    =
-    \\int_a^b (P x' + Q y')\\,dt$$
+    \\int_a^b (Px'+Qy')dt$$
     `;
-    explanationHTML = `
-      This line integral represents the work done by the vector field
-      <span class="math">\\(\\langle P,Q \\rangle\\)</span>
-      along the plane curve.
-    `;
+    explanationHTML = `Work integral in the plane.`;
   }
 
-  // =================================================
-  // Space curve — scalar field — arc length ds
-  // =================================================
+  // Space scalar — ds
   if (curveType === "space" && fieldType === "scalar" && methodType === "ds") {
     formula = `
-    $$\\int_C f(x,y,z)\\,ds
+    $$\\int_C f\\,ds
     =
     \\int_a^b f(x(t),y(t),z(t))
-    \\sqrt{\\left(\\frac{dx}{dt}\\right)^2
-          +\\left(\\frac{dy}{dt}\\right)^2
-          +\\left(\\frac{dz}{dt}\\right)^2}\\,dt$$
+    \\sqrt{(x')^2+(y')^2+(z')^2}dt$$
     `;
-    explanationHTML = `
-      This is the standard scalar line integral along a space curve,
-      computed using a parametrization.
-    `;
+    explanationHTML = `Standard scalar line integral in space.`;
   }
 
-  // =================================================
-  // Space curve — scalar field — dx / dy / dz
-  // =================================================
+  // Space scalar — dx, dy, dz
   if (curveType === "space" && fieldType === "scalar" && methodType === "dxyz") {
     formula = `
-    $$\\int_C f(x,y,z)\\,dx
-    =
-    \\int_a^b f(x(t),y(t),z(t))\\,x'(t)\\,dt$$
-    $$\\int_C f(x,y,z)\\,dy
-    =
-    \\int_a^b f(x(t),y(t),z(t))\\,y'(t)\\,dt$$
-    $$\\int_C f(x,y,z)\\,dz
-    =
-    \\int_a^b f(x(t),y(t),z(t))\\,z'(t)\\,dt$$
+    $$\\int_C f\\,dx = \\int f x' dt$$
+    $$\\int_C f\\,dy = \\int f y' dt$$
+    $$\\int_C f\\,dz = \\int f z' dt$$
     `;
-    explanationHTML = `
-      Although less common in practice, scalar line integrals along space
-      curves can also be expressed using coordinate differentials once a
-      parametrization is chosen.
-    `;
+    explanationHTML = `Coordinate-based scalar integrals in space.`;
   }
 
-  // =================================================
-  // Space curve — vector field — dx / dy / dz
-  // =================================================
+  // Space vector
   if (curveType === "space" && fieldType === "vector" && methodType === "dxyz") {
     formula = `
-    $$\\int_C P(x,y,z)\\,dx + Q(x,y,z)\\,dy + R(x,y,z)\\,dz
+    $$\\int_C P\\,dx+Q\\,dy+R\\,dz
     =
-    \\int_a^b \\Big(
-      P(x(t),y(t),z(t))\\,x'(t)
-      + Q(x(t),y(t),z(t))\\,y'(t)
-      + R(x(t),y(t),z(t))\\,z'(t)
-    \\Big)dt$$
+    \\int_a^b (Px'+Qy'+Rz')dt$$
     `;
-    explanationHTML = `
-      This is the work integral of a vector field along a space curve,
-      computed using coordinate differentials.
-    `;
+    explanationHTML = `Work integral in space.`;
   }
 
-  // Inject content
   formulaDiv.innerHTML = formula;
   explanationDiv.innerHTML = explanationHTML;
   document.getElementById("result").classList.remove("hidden");
 
-  // MathJax re-render
   if (window.MathJax) {
     MathJax.typesetClear([formulaDiv, explanationDiv, naturalDiv]);
     MathJax.typesetPromise([formulaDiv, explanationDiv, naturalDiv]);
