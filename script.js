@@ -89,7 +89,7 @@ function showResult() {
     $$\\int_C f(x,y)\\,ds
     =
     \\int_a^b f(x(t),y(t))
-    \\sqrt{(x')^2+(y')^2}\\,dt$$
+    \\sqrt{(\frac{dx}{dt})^2+(\frac{dy}{dt})^2}\\,dt$$
     `;
     explanationHTML = `Scalar accumulation along a plane curve.`;
 
@@ -108,8 +108,8 @@ function showResult() {
     methodType === "dxdy"
   ) {
     formula = `
-    $$\\int_C f(x,y)\\,dx = \\int_a^b f(x(t),y(t))x'(t)dt$$
-    $$\\int_C f(x,y)\\,dy = \\int_a^b f(x(t),y(t))y'(t)dt$$
+    $$\\int_C f(x,y)\\,dx = \\int_a^b f(x(t),y(t))\frac{dx}{dt}(t)dt$$
+    $$\\int_C f(x,y)\\,dy = \\int_a^b f(x(t),y(t))\frac{dy}{dt}(t)dt$$
     `;
     explanationHTML = `Scalar line integrals via coordinate differentials.`;
   }
@@ -119,7 +119,7 @@ function showResult() {
     formula = `
     $$\\int_C P(x,y)\\,dx+Q(x,y)\\,dy
     =
-    \\int_a^b (P(x(t),y(t))x'+Q(x(t),y(t))y')dt$$
+    \\int_a^b (P(x(t),y(t))\frac{dx}{dt}+Q(x(t),y(t))\frac{dy}{dt})dt$$
     `;
     explanationHTML = `Work integral in the plane.`;
   }
@@ -130,7 +130,7 @@ function showResult() {
     $$\\int_C f(x,y,z)\\,ds
     =
     \\int_a^b f(x(t),y(t),z(t))
-    \\sqrt{(x')^2+(y')^2+(z')^2}dt$$
+    \\sqrt{(\frac{dx}{dt})^2+(\frac{dy}{dt})^2+(\frac{dz}{dt})^2}dt$$
     `;
     explanationHTML = `Standard scalar line integral in space.`;
   }
@@ -138,9 +138,9 @@ function showResult() {
   // Space scalar — dx, dy, dz
   if (curveType === "space" && fieldType === "scalar" && methodType === "dxyz") {
     formula = `
-    $$\\int_C f(x,y,z)\\,dx = \\int_a^b f(x(t),y(t),z(t)) x' dt$$
-    $$\\int_C f(x,y,z)\\,dy = \\int_a^b f(x(t),y(t),z(t)) y' dt$$
-    $$\\int_C f(x,y,z)\\,dz = \\int_a^b f(x(t),y(t),z(t)) z' dt$$
+    $$\\int_C f(x,y,z)\\,dx = \\int_a^b f(x(t),y(t),z(t)) \frac{dx}{dt} dt$$
+    $$\\int_C f(x,y,z)\\,dy = \\int_a^b f(x(t),y(t),z(t)) \frac{dy}{dt} dt$$
+    $$\\int_C f(x,y,z)\\,dz = \\int_a^b f(x(t),y(t),z(t)) \frac{dz}{dt} dt$$
     `;
     explanationHTML = `Coordinate-based scalar integrals in space.`;
   }
@@ -150,7 +150,7 @@ function showResult() {
     formula = `
     $$\\int_C P\\,dx+Q\\,dy+R\\,dz
     =
-    \\int_a^b (Px'+Qy'+Rz')dt$$
+    \\int_a^b (P\frac{dx}{dt}+Q\frac{dy}{dt}+R\frac{dz}{dt})dt$$
     `;
     explanationHTML = `Work integral in space.`;
   }
