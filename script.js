@@ -1,3 +1,6 @@
+// Copilot: Fix MathJax rendering issues described above.
+// Ensure re-typesetting occurs after DOM updates.
+// Add a safe, reusable function if needed.
 // ------------------------------------------------
 // State variables
 // ------------------------------------------------
