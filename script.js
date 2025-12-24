@@ -1,6 +1,13 @@
-// ------------------------------------------------
-// MathJax Utilities (centralized, reusable)
-// ------------------------------------------------
+// ================================================================
+// GLOBAL SAFE STATE (prevents ReferenceError crashes)
+// ================================================================
+window.formula = "";
+window.explanationHTML = "";
+window.naturalExplanation = "";
+
+// ================================================================
+// MathJax Utilities (centralized, safe)
+// ================================================================
 function renderMath(elements = null) {
   if (!window.MathJax) return;
 
@@ -8,16 +15,16 @@ function renderMath(elements = null) {
     .catch(err => console.error("MathJax rendering error:", err));
 }
 
-// ------------------------------------------------
+// ================================================================
 // State variables
-// ------------------------------------------------
+// ================================================================
 let curveType = "";
 let fieldType = "";
 let methodType = "";
 
-// ------------------------------------------------
+// ================================================================
 // Step handlers
-// ------------------------------------------------
+// ================================================================
 function chooseCurve(type) {
   curveType = type;
   methodType = "";
@@ -47,6 +54,7 @@ function chooseField(type) {
     }
     if (fieldType === "vector") {
       methodType = "coord";
+      computeResult();
       showResult();
     }
   }
@@ -66,28 +74,129 @@ function chooseField(type) {
 
 function chooseMethod(type) {
   methodType = type;
+  computeResult();
   showResult();
 }
 
-// ------------------------------------------------
+// ================================================================
+// Decision logic (this matches your original intent)
+// ================================================================
+function computeResult() {
+  window.formula = "";
+  window.explanationHTML = "";
+  window.naturalExplanation = "";
+
+  // ------------------------------------------------
+  // Plane curve — scalar field
+  // ------------------------------------------------
+  if (curveType === "plane" && fieldType === "scalar") {
+    if (methodType === "ds") {
+      window.formula = `
+      \\[
+      \\int_C f(x,y)\\, ds
+      \\]
+      `;
+      window.explanationHTML = `
+      You are integrating a scalar field along a plane curve.
+      The natural choice is the line integral with respect to arc length.
+      `;
+    }
+
+    if (methodType === "dxdy") {
+      window.formula = `
+      \\[
+      \\int_C f(x,y)\\,dx + g(x,y)\\,dy
+      \\]
+      `;
+      window.explanationHTML = `
+      The curve is described in Cartesian form, so integration
+      with respect to \\(x\\) and \\(y\\) is appropriate.
+      `;
+    }
+  }
+
+  // ------------------------------------------------
+  // Plane curve — vector field (coordinate form)
+  // ------------------------------------------------
+  if (curveType === "plane" && fieldType === "vector") {
+    window.formula = `
+    \\[
+    \\int_C \\mathbf{F}\\cdot d\\mathbf{r}
+    = \\int_C P(x,y)\\,dx + Q(x,y)\\,dy
+    \\]
+    `;
+    window.explanationHTML = `
+    For a vector field in the plane, the line integral represents
+    work done by the field along the curve.
+    `;
+  }
+
+  // ------------------------------------------------
+  // Space curve — scalar field
+  // ------------------------------------------------
+  if (curveType === "space" && fieldType === "scalar") {
+    if (methodType === "ds") {
+      window.formula = `
+      \\[
+      \\int_C f(x,y,z)\\, ds
+      \\]
+      `;
+      window.explanationHTML = `
+      A scalar field integrated along a space curve
+      uses the arc length differential.
+      `;
+    }
+
+    if (methodType === "dxyz") {
+      window.formula = `
+      \\[
+      \\int_C f(x,y,z)
+      \\left|
+      \\frac{d\\mathbf{r}}{dt}
+      \\right| dt
+      \\]
+      `;
+      window.explanationHTML = `
+      When the curve is parametrized, the integral
+      is naturally written in terms of the parameter.
+      `;
+    }
+  }
+
+  // ------------------------------------------------
+  // Space curve — vector field
+  // ------------------------------------------------
+  if (curveType === "space" && fieldType === "vector") {
+    window.formula = `
+    \\[
+    \\int_C \\mathbf{F}\\cdot d\\mathbf{r}
+    = \\int_C
+    \\left(
+    P\\,dx + Q\\,dy + R\\,dz
+    \\right)
+    \\]
+    `;
+    window.explanationHTML = `
+    The line integral of a vector field in space
+    measures the work done along the curve.
+    `;
+  }
+}
+
+// ================================================================
 // Result display
-// ------------------------------------------------
+// ================================================================
 function showResult() {
   const formulaDiv = document.getElementById("formula");
   const explanationDiv = document.getElementById("explanation");
   const naturalDiv = document.getElementById("natural-param");
   const resultDiv = document.getElementById("result");
 
-  // These variables are assumed to be computed earlier
-  // formula
-  // explanationHTML
-  // naturalExplanation (optional)
+  formulaDiv.innerHTML = window.formula;
+  explanationDiv.innerHTML = window.explanationHTML;
 
-  formulaDiv.innerHTML = formula ?? "";
-  explanationDiv.innerHTML = explanationHTML ?? "";
-
-  if (typeof naturalExplanation === "string" && naturalExplanation.trim() !== "") {
-    naturalDiv.innerHTML = naturalExplanation;
+  if (window.naturalExplanation && window.naturalExplanation.trim() !== "") {
+    naturalDiv.innerHTML = window.naturalExplanation;
     naturalDiv.classList.remove("hidden");
   } else {
     naturalDiv.innerHTML = "";
@@ -96,13 +205,12 @@ function showResult() {
 
   resultDiv.classList.remove("hidden");
 
-  // ✅ Safe, centralized MathJax rendering
   renderMath([formulaDiv, explanationDiv, naturalDiv]);
 }
 
-// ------------------------------------------------
+// ================================================================
 // Utilities
-// ------------------------------------------------
+// ================================================================
 function hideAllSteps() {
   document.querySelectorAll(".step").forEach(step => {
     step.classList.add("hidden");
@@ -132,4 +240,8 @@ function resetResult() {
 
   naturalDiv.innerHTML = "";
   naturalDiv.classList.add("hidden");
+
+  window.formula = "";
+  window.explanationHTML = "";
+  window.naturalExplanation = "";
 }
