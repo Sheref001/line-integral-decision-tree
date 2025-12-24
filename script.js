@@ -1,6 +1,13 @@
-// Copilot: Fix MathJax rendering issues described above.
-// Ensure re-typesetting occurs after DOM updates.
-// Add a safe, reusable function if needed.
+// ------------------------------------------------
+// MathJax Utilities (centralized, reusable)
+// ------------------------------------------------
+function renderMath(elements = null) {
+  if (!window.MathJax) return;
+
+  MathJax.typesetPromise(elements ?? undefined)
+    .catch(err => console.error("MathJax rendering error:", err));
+}
+
 // ------------------------------------------------
 // State variables
 // ------------------------------------------------
@@ -27,6 +34,7 @@ function chooseField(type) {
 
   stepMethod.classList.add("hidden");
   resetResult();
+
   document.getElementById("btn-ds").classList.add("hidden");
   document.getElementById("btn-dxdy").classList.add("hidden");
   document.getElementById("btn-dxyz").classList.add("hidden");
@@ -52,15 +60,44 @@ function chooseField(type) {
     if (fieldType === "vector") {
       stepMethod.classList.remove("hidden");
       document.getElementById("btn-dxyz").classList.remove("hidden");
-@@ -194,32 +198,38 @@ R\\frac{dz}{dt}
-
-  formulaDiv.innerHTML = formula;
-  explanationDiv.innerHTML = explanationHTML;
-  document.getElementById("result").classList.remove("hidden");
-
-  if (window.MathJax) {
-    MathJax.typesetPromise([formulaDiv, naturalDiv, explanationDiv]);
+    }
   }
+}
+
+function chooseMethod(type) {
+  methodType = type;
+  showResult();
+}
+
+// ------------------------------------------------
+// Result display
+// ------------------------------------------------
+function showResult() {
+  const formulaDiv = document.getElementById("formula");
+  const explanationDiv = document.getElementById("explanation");
+  const naturalDiv = document.getElementById("natural-param");
+  const resultDiv = document.getElementById("result");
+
+  // These variables are assumed to be computed earlier
+  // formula
+  // explanationHTML
+  // naturalExplanation (optional)
+
+  formulaDiv.innerHTML = formula ?? "";
+  explanationDiv.innerHTML = explanationHTML ?? "";
+
+  if (typeof naturalExplanation === "string" && naturalExplanation.trim() !== "") {
+    naturalDiv.innerHTML = naturalExplanation;
+    naturalDiv.classList.remove("hidden");
+  } else {
+    naturalDiv.innerHTML = "";
+    naturalDiv.classList.add("hidden");
+  }
+
+  resultDiv.classList.remove("hidden");
+
+  // ✅ Safe, centralized MathJax rendering
+  renderMath([formulaDiv, explanationDiv, naturalDiv]);
 }
 
 // ------------------------------------------------
@@ -83,13 +120,16 @@ function resetTree() {
 }
 
 function resetResult() {
-  document.getElementById("result").classList.add("hidden");
-  document.getElementById("formula").innerHTML = "";
-  document.getElementById("explanation").innerHTML = "";
-  document.getElementById("natural-param").innerHTML = "";
-  document.getElementById("natural-param").classList.add("hidden");
-
+  const resultDiv = document.getElementById("result");
+  const formulaDiv = document.getElementById("formula");
+  const explanationDiv = document.getElementById("explanation");
   const naturalDiv = document.getElementById("natural-param");
+
+  resultDiv.classList.add("hidden");
+
+  formulaDiv.innerHTML = "";
+  explanationDiv.innerHTML = "";
+
   naturalDiv.innerHTML = "";
   naturalDiv.classList.add("hidden");
 }
