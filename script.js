@@ -55,7 +55,7 @@ function chooseMethod(type) {
 }
 
 // ------------------------------------------------
-// Result logic
+// Result logic (MathJax-safe)
 // ------------------------------------------------
 function showResult() {
   const formulaDiv = document.getElementById("formula");
@@ -71,17 +71,29 @@ function showResult() {
   // Plane scalar — ds
   if (curveType === "plane" && fieldType === "scalar" && methodType === "ds") {
     formula = `
-    $$\\int_C f(x,y)\\,ds
-    =
-    \\int_a^b f(x(t),y(t))
-    \\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}\\,dt$$
+\\[
+\\int_C f(x,y)\\,ds
+=
+\\int_a^b f(x(t),y(t))
+\\sqrt{
+  \\left(\\frac{dx}{dt}\\right)^2
+  +
+  \\left(\\frac{dy}{dt}\\right)^2
+}\\,dt
+\\]
     `;
     explanationHTML = `Scalar accumulation along a plane curve.`;
 
     naturalDiv.innerHTML = `
-      <b>Special case: natural parametrization</b><br><br>
-      $$y=g(x):\\; \\int_a^b f(x,g(x))\\sqrt{1+(g'(x))^2}\\,dx$$
-      $$x=h(y):\\; \\int_a^b f(h(y),y)\\sqrt{1+(h'(y))^2}\\,dy$$
+<b>Special case: natural parametrization</b><br><br>
+\\[
+y=g(x):\\quad
+\\int_a^b f(x,g(x))\\sqrt{1+(g'(x))^2}\\,dx
+\\]
+\\[
+x=h(y):\\quad
+\\int_a^b f(h(y),y)\\sqrt{1+(h'(y))^2}\\,dy
+\\]
     `;
     naturalDiv.classList.remove("hidden");
   }
@@ -89,12 +101,16 @@ function showResult() {
   // Plane scalar — dx, dy
   if (curveType === "plane" && fieldType === "scalar" && methodType === "dxdy") {
     formula = `
-    $$\\int_C f(x,y)\\,dx
-    =
-    \\int_a^b f(x(t),y(t))\\frac{dx}{dt}\\,dt$$
-    $$\\int_C f(x,y)\\,dy
-    =
-    \\int_a^b f(x(t),y(t))\\frac{dy}{dt}\\,dt$$
+\\[
+\\int_C f(x,y)\\,dx
+=
+\\int_a^b f(x(t),y(t))\\frac{dx}{dt}\\,dt
+\\]
+\\[
+\\int_C f(x,y)\\,dy
+=
+\\int_a^b f(x(t),y(t))\\frac{dy}{dt}\\,dt
+\\]
     `;
     explanationHTML = `Scalar line integrals via coordinate differentials.`;
   }
@@ -102,10 +118,16 @@ function showResult() {
   // Plane vector
   if (curveType === "plane" && fieldType === "vector") {
     formula = `
-    $$\\int_C P(x,y)\\,dx+Q(x,y)\\,dy
-    =
-    \\int_a^b \\left(P(x(t),y(t))\\frac{dx}{dt}
-    +Q(x(t),y(t))\\frac{dy}{dt}\\right)dt$$
+\\[
+\\int_C \\bigl(P(x,y)\\,dx + Q(x,y)\\,dy\\bigr)
+=
+\\int_a^b
+\\bigl(
+P(x(t),y(t))\\frac{dx}{dt}
++
+Q(x(t),y(t))\\frac{dy}{dt}
+\\bigr)\\,dt
+\\]
     `;
     explanationHTML = `Work integral in the plane.`;
   }
@@ -113,14 +135,18 @@ function showResult() {
   // Space scalar — ds
   if (curveType === "space" && fieldType === "scalar" && methodType === "ds") {
     formula = `
-    $$\\int_C f(x,y,z)\\,ds
-    =
-    \\int_a^b f(x(t),y(t),z(t))
-    \\sqrt{
-      \\left(\\frac{dx}{dt}\\right)^2+
-      \\left(\\frac{dy}{dt}\\right)^2+
-      \\left(\\frac{dz}{dt}\\right)^2
-    }\\,dt$$
+\\[
+\\int_C f(x,y,z)\\,ds
+=
+\\int_a^b f(x(t),y(t),z(t))
+\\sqrt{
+  \\left(\\frac{dx}{dt}\\right)^2
+  +
+  \\left(\\frac{dy}{dt}\\right)^2
+  +
+  \\left(\\frac{dz}{dt}\\right)^2
+}\\,dt
+\\]
     `;
     explanationHTML = `Standard scalar line integral in space.`;
   }
@@ -128,15 +154,21 @@ function showResult() {
   // Space scalar — dx, dy, dz
   if (curveType === "space" && fieldType === "scalar" && methodType === "dxyz") {
     formula = `
-    $$\\int_C f(x,y,z)\\,dx
-    =
-    \\int_a^b f(x(t),y(t),z(t))\\frac{dx}{dt}\\,dt$$
-    $$\\int_C f(x,y,z)\\,dy
-    =
-    \\int_a^b f(x(t),y(t),z(t))\\frac{dy}{dt}\\,dt$$
-    $$\\int_C f(x,y,z)\\,dz
-    =
-    \\int_a^b f(x(t),y(t),z(t))\\frac{dz}{dt}\\,dt$$
+\\[
+\\int_C f(x,y,z)\\,dx
+=
+\\int_a^b f(x(t),y(t),z(t))\\frac{dx}{dt}\\,dt
+\\]
+\\[
+\\int_C f(x,y,z)\\,dy
+=
+\\int_a^b f(x(t),y(t),z(t))\\frac{dy}{dt}\\,dt
+\\]
+\\[
+\\int_C f(x,y,z)\\,dz
+=
+\\int_a^b f(x(t),y(t),z(t))\\frac{dz}{dt}\\,dt
+\\]
     `;
     explanationHTML = `Coordinate-based scalar integrals in space.`;
   }
@@ -144,13 +176,18 @@ function showResult() {
   // Space vector
   if (curveType === "space" && fieldType === "vector" && methodType === "dxyz") {
     formula = `
-    $$\\int_C P\\,dx+Q\\,dy+R\\,dz
-    =
-    \\int_a^b \\left(
-      P\\frac{dx}{dt}
-      +Q\\frac{dy}{dt}
-      +R\\frac{dz}{dt}
-    \\right)dt$$
+\\[
+\\int_C \\bigl(P\\,dx + Q\\,dy + R\\,dz\\bigr)
+=
+\\int_a^b
+\\bigl(
+P\\frac{dx}{dt}
++
+Q\\frac{dy}{dt}
++
+R\\frac{dz}{dt}
+\\bigr)\\,dt
+\\]
     `;
     explanationHTML = `Work integral in space.`;
   }
@@ -160,8 +197,7 @@ function showResult() {
   document.getElementById("result").classList.remove("hidden");
 
   if (window.MathJax) {
-    MathJax.typesetClear([formulaDiv, explanationDiv, naturalDiv]);
-    MathJax.typesetPromise([formulaDiv, explanationDiv, naturalDiv]);
+    MathJax.typesetPromise([formulaDiv, naturalDiv, explanationDiv]);
   }
 }
 
