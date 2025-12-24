@@ -9,74 +9,59 @@
 
   <!-- MathJax -->
   <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['\\(', '\\)']],
-        displayMath: [['$$', '$$']]
-      }
-    };
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$', '$$']],
+      packages: {'[+]': ['ams']}
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 </head>
 
 <body>
 
   <h1>Decision Tree for Line Integrals</h1>
 
-  <!-- ========================= -->
-  <!-- STEP 1: Curve Type -->
-  <!-- ========================= -->
+  <!-- STEP 1 -->
   <div id="step-curve" class="step">
     <h2>1. What type of curve is \(C\)?</h2>
-    <button onclick="chooseCurve('plane')">Plane curve \( \mathbb{R}^2 \)</button>
-    <button onclick="chooseCurve('space')">Space curve \( \mathbb{R}^3 \)</button>
+    <button onclick="chooseCurve('plane')">Plane curve</button> \( \mathbb{R}^2 \)
+    <button onclick="chooseCurve('space')">Space curve</button> \( \mathbb{R}^3 \)
   </div>
 
-  <!-- ========================= -->
-  <!-- STEP 2: Field Type -->
-  <!-- ========================= -->
+  <!-- STEP 2 -->
   <div id="step-field" class="step hidden">
     <h2>2. What type of field?</h2>
     <button onclick="chooseField('scalar')">Scalar field</button>
     <button onclick="chooseField('vector')">Vector field</button>
   </div>
 
-  <!-- ========================= -->
-<!-- STEP 3: What are you integrating with respect to? -->
-<!-- ========================= -->
-<div id="step-method" class="step hidden">
-  <h2>3. What are you integrating with respect to?</h2>
+  <!-- STEP 3 -->
+  <div id="step-method" class="step hidden">
+    <h2>3. What are you integrating with respect to?</h2>
 
-  <button id="btn-ds" onclick="chooseMethod('ds')">
-    Arc length \( ds \)
-  </button>
+    <button id="btn-ds" onclick="chooseMethod('ds')">Arc length</button> \( ds \)
+    <button id="btn-dxdy" onclick="chooseMethod('dxdy')">Coordinates</button> \( dx, dy \)
+    <button id="btn-dxyz" onclick="chooseMethod('dxyz')">Coordinates</button> \( dx, dy, dz \)
+  </div>
 
-  <button id="btn-dxdy" onclick="chooseMethod('dxdy')">
-    Coordinates \( dx, dy \)
-  </button>
-
-  <button id="btn-dxyz" onclick="chooseMethod('dxyz')">
-    Coordinates \( dx, dy, dz \)
-  </button>
-</div>
-
-
-  <!-- ========================= -->
   <!-- RESULT -->
-  <!-- ========================= -->
   <div id="result" class="step hidden">
     <h2>Result</h2>
 
     <div id="formula" class="formula-box"></div>
-
     <div id="natural-param" class="natural-box hidden"></div>
-
     <div id="explanation" class="explanation-box"></div>
 
     <button onclick="resetTree()">Start over</button>
   </div>
 
-  <!-- Script -->
   <script src="script.js"></script>
 
 </body>
