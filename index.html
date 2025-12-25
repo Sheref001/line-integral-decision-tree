@@ -4,65 +4,36 @@
   <meta charset="UTF-8" />
   <title>Line Integral Decision Tree</title>
 
-  <!-- Styling -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/styles.css" />
 
-  <!-- MathJax -->
-  <script>
-  window.MathJax = {
-    tex: {
-      inlineMath: [['\\(', '\\)']],
-      displayMath: [['$$', '$$']],
-      packages: {'[+]': ['ams']}
-    },
-    options: {
-      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
-    }
-  };
-  </script>
+  <!-- MathJax MUST load before your JS -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+  <!-- App scripts (order matters) -->
+  <script defer src="js/state.js"></script>
+  <script defer src="js/decision-table.js"></script>
+  <script defer src="js/ui-utils.js"></script>
+  <script defer src="js/mathjax.js"></script>
+  <script defer src="js/breadcrumbs.js"></script>
+  <script defer src="js/url-sync.js"></script>
+  <script defer src="js/renderer.js"></script>
+  <script defer src="js/main.js"></script>
 </head>
 
 <body>
 
   <h1>Decision Tree for Line Integrals</h1>
 
-  <!-- STEP 1 -->
-  <div id="step-curve" class="step">
-    <h2>1. What type of curve is \(C\)?</h2>
-    <button onclick="chooseCurve('plane')">Plane curve</button> \( \mathbb{R}^2 \)
-    <button onclick="chooseCurve('space')">Space curve</button> \( \mathbb{R}^3 \)
+  <div id="breadcrumbs" class="breadcrumbs"></div>
+
+  <div id="step-curve" class="step"></div>
+  <div id="step-field" class="step hidden"></div>
+  <div id="step-method" class="step hidden"></div>
+
+  <div id="result" class="hidden">
+    <div id="formula"></div>
+    <div id="explanation"></div>
   </div>
-
-  <!-- STEP 2 -->
-  <div id="step-field" class="step hidden">
-    <h2>2. What type of field?</h2>
-    <button onclick="chooseField('scalar')">Scalar field</button>
-    <button onclick="chooseField('vector')">Vector field</button>
-  </div>
-
-  <!-- STEP 3 -->
-  <div id="step-method" class="step hidden">
-    <h2>3. What are you integrating with respect to?</h2>
-
-    <button id="btn-ds" onclick="chooseMethod('ds')">Arc length</button> \( ds \)
-    <button id="btn-dxdy" onclick="chooseMethod('dxdy')">Coordinates</button> \( dx, dy \)
-    <button id="btn-dxyz" onclick="chooseMethod('dxyz')">Coordinates</button> \( dx, dy, dz \)
-  </div>
-
-  <!-- RESULT -->
-  <div id="result" class="step hidden">
-    <h2>Result</h2>
-
-    <div id="formula" class="formula-box"></div>
-    <div id="natural-param" class="natural-box hidden"></div>
-    <div id="explanation" class="explanation-box"></div>
-
-    <button onclick="resetTree()">Start over</button>
-  </div>
-
-  <script src="script.js"></script>
 
 </body>
 </html>
