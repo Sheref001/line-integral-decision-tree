@@ -265,7 +265,7 @@ function showResult() {
     \\]
     `;
     explanation = `
-    This reduces to scalar line integrals in \\(x,y,z\\).
+    This reduces to scalar line integrals in \\[(x,y,z)\\].
     `;
   }
 
