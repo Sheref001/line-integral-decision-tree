@@ -197,7 +197,7 @@ function showResult() {
     `;
     explanation = `
     <b>Special case (natural parametrization):</b><br>
-    If $y=g(x)$:
+    If \\[y=g(x)\\]:
     \\[
     \\int_a^b f(x,g(x))\\sqrt{1+(g'(x))^2}\\,dx
     \\]
