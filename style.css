@@ -1,19 +1,98 @@
+/* ================================================================
+   Base layout
+   ================================================================ */
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 1.5rem;
+  background: #f8f9fb;
+  color: #222;
+}
+
+header {
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  margin-bottom: 0.3rem;
+}
+
+.subtitle {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* ================================================================
+   Steps & buttons
+   ================================================================ */
+
+.step {
+  margin: 1.2rem 0;
+}
+
+button.choice {
+  display: inline-block;
+  margin: 0.3rem 0.4rem 0.3rem 0;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+button.choice:hover {
+  background: #eef2ff;
+}
+
+/* ================================================================
+   Breadcrumbs
+   ================================================================ */
+
+.breadcrumbs {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+/* ================================================================
+   Result area
+   ================================================================ */
+
+.result {
+  margin-top: 2rem;
+  padding: 1.2rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.formula {
+  margin: 1rem 0;
+  font-size: 1.1rem;
+}
+
+.explanation {
+  color: #444;
+  line-height: 1.5;
+}
+
+/* ================================================================
+   Utilities
+   ================================================================ */
+
 .hidden {
   display: none;
 }
 
-.step {
-  margin: 1em 0;
-}
+/* ================================================================
+   Footer
+   ================================================================ */
 
-button.choice {
-  margin: 0.3em;
-  padding: 0.5em 1em;
-  cursor: pointer;
-}
-
-.breadcrumbs {
-  font-size: 0.9em;
-  margin-bottom: 1em;
-  color: #555;
+footer {
+  margin-top: 3rem;
+  font-size: 0.8rem;
+  color: #777;
 }
