@@ -154,10 +154,24 @@ function renderBreadcrumbs() {
   bc.innerHTML = "";
   const crumbs = getBreadcrumbs();
 
-  crumbs.forEach((c, i) => {
-    bc.appendChild(document.createTextNode(c));
-    if (i < crumbs.length - 1)
+  crumbs.forEach((text, index) => {
+    const span = document.createElement("span");
+    span.textContent = text;
+    span.className = "breadcrumb";
+
+    // Make only earlier crumbs clickable
+    if (index < crumbs.length - 1) {
+      span.classList.add("clickable");
+      span.addEventListener("click", () =>
+        navigateToLevel(index)
+      );
+    }
+
+    bc.appendChild(span);
+
+    if (index < crumbs.length - 1) {
       bc.appendChild(document.createTextNode(" → "));
+    }
   });
 }
 
