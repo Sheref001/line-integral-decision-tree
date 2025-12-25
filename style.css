@@ -96,3 +96,17 @@ footer {
   font-size: 0.8rem;
   color: #777;
 }
+.breadcrumb {
+  cursor: default;
+}
+
+.breadcrumb.clickable {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #1a4fff;
+}
+
+.breadcrumb.clickable:hover {
+  color: #0f2fbf;
+}
+
