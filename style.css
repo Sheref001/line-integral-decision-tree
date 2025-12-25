@@ -109,4 +109,11 @@ footer {
 .breadcrumb.clickable:hover {
   color: #0f2fbf;
 }
+.step {
+  margin: 1.2rem 0;
+  padding: 1rem;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
 
