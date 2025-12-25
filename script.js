@@ -224,7 +224,7 @@ function showResult() {
     \\[
     \\int_C \\mathbf{F}\\cdot d\\mathbf{r}
     =
-    \\int_C (P\\,dx + Q\\,dy)
+    \\int_C (P(x,y)\\,dx + Q(x,y)\\,dy)
     \\]
     `;
     explanation = `
@@ -261,7 +261,7 @@ function showResult() {
     \\[
     \\int_C \\mathbf{F}\\cdot d\\mathbf{r}
     =
-    \\int_C (P\\,dx+Q\\,dy+R\\,dz)
+    \\int_C (P(x,y,z)\\,dx+Q(x,y,z)\\,dy+R(x,y,z)\\,dz)
     \\]
     `;
     explanation = `
