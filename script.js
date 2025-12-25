@@ -214,7 +214,7 @@ function showResult() {
     \\]
     `;
     explanation = `
-    Similar formulas apply for $\\int_C f(x,y)\\,dy$.
+   Similar formulas apply for \\(\\int_C f(x,y)\\,dy\\).
     `;
   }
 
