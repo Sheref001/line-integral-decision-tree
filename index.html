@@ -1,2 +1,52 @@
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-<script defer src="script.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Line Integral Decision Tree</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- MathJax (must come before script.js) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Main application -->
+  <script defer src="script.js"></script>
+</head>
+
+<body>
+
+  <header>
+    <h1>Decision Tree for Line Integrals</h1>
+    <p class="subtitle">
+      Choose the type of curve and field to obtain the correct line integral formulation.
+    </p>
+  </header>
+
+  <!-- Breadcrumbs -->
+  <div id="breadcrumbs" class="breadcrumbs"></div>
+
+  <!-- Decision steps -->
+  <main>
+    <section id="step-curve" class="step"></section>
+    <section id="step-field" class="step hidden"></section>
+    <section id="step-method" class="step hidden"></section>
+  </main>
+
+  <!-- Result -->
+  <section id="result" class="result hidden">
+    <h2>Recommended Integral</h2>
+    <div id="formula" class="formula"></div>
+    <div id="explanation" class="explanation"></div>
+  </section>
+
+  <footer>
+    <p>
+      © Dr. Sheref Nasereldin — Educational use only
+    </p>
+  </footer>
+
+</body>
+</html>
