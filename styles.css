@@ -34,24 +34,69 @@ h1 {
   border-radius: 10px;
   background: #ffffff;
   box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  transition: all 0.25s ease;
+  position: relative;
 }
 
-/* Color cues by decision level (semantic, not decorative) */
+/* Active vs completed states */
 
-#step-curve {
-  background: #f1f5f9;        /* neutral / geometry */
+.step.active {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
 }
 
-#step-field {
-  background: #eff6ff;        /* blue / field type */
+.step.completed {
+  opacity: 0.85;
+  box-shadow: none;
+  border-left: 5px solid #94a3b8;
 }
 
-#step-method {
-  background: #f5f3ff;        /* purple / strategy */
+/* Directional cue (reasoning flow) */
+
+.step::after {
+  content: "↓";
+  display: block;
+  text-align: center;
+  margin-top: 0.8rem;
+  color: #94a3b8;
+  font-size: 1.2rem;
+}
+
+.step:last-of-type::after {
+  content: "";
+}
+
+/* Internal hierarchy */
+
+.step h2 {
+  font-size: 1rem;
+  margin-bottom: 0.6rem;
+  color: #1e293b;
+}
+
+.step p {
+  font-size: 0.9rem;
+  color: #475569;
 }
 
 /* ================================================================
-   Buttons
+   Color cues by decision level (semantic, not decorative)
+   ================================================================ */
+
+#step-curve {
+  background: #f1f5f9;        /* geometry */
+}
+
+#step-field {
+  background: #eff6ff;        /* field type */
+}
+
+#step-method {
+  background: #f5f3ff;        /* strategy */
+}
+
+/* ================================================================
+   Buttons (choices)
    ================================================================ */
 
 button.choice {
@@ -63,7 +108,7 @@ button.choice {
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition: all 0.2s ease;
 }
 
 button.choice:hover {
@@ -72,8 +117,18 @@ button.choice:hover {
   background: #eef2ff;
 }
 
+/* Selected choice (critical UX feedback) */
+
+button.choice.selected {
+  background: #4f46e5;
+  color: white;
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79,70,229,0.35);
+  transform: translateY(-1px);
+}
+
 /* ================================================================
-   Breadcrumbs
+   Breadcrumbs (reasoning trace)
    ================================================================ */
 
 .breadcrumbs {
@@ -84,11 +139,24 @@ button.choice:hover {
   color: #334155;
   margin-bottom: 1rem;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
 .breadcrumb {
   cursor: default;
   font-weight: 500;
+}
+
+.breadcrumb::after {
+  content: "→";
+  margin: 0 0.3rem;
+  color: #94a3b8;
+}
+
+.breadcrumb:last-child::after {
+  content: "";
 }
 
 .breadcrumb.clickable {
@@ -108,14 +176,20 @@ button.choice:hover {
 .result {
   margin-top: 2rem;
   padding: 1.2rem;
-  background: #fff7ed;        /* orange tint = conclusion */
-  border-left: 6px solid #fb923c;
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+  border-left: 6px solid #f97316;
   border-radius: 6px;
+  transition: all 0.25s ease;
 }
 
 .formula {
   margin: 1rem 0;
-  font-size: 1.15rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  background: #ffffff;
+  padding: 0.8rem;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px #fed7aa;
 }
 
 .explanation {
