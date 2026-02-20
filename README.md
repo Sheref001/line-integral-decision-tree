@@ -32,6 +32,14 @@ Based on the student’s choices, the correct line integral formula is displayed
 
 No installation, login, or prior setup is required.
 
+## 🧭 UX Highlights
+
+- Guided decision flow with a visible progress map  
+- Smart search that auto-selects the path based on short descriptions  
+- Student vs. Instructor mode (quick answers vs. explanations)  
+- Worked example cards that update with each choice  
+- Mobile-first layout and clear navigation
+
 ## 🛠️ Technical Overview
 
 - Built with **HTML, CSS, and JavaScript**
@@ -43,4 +51,3 @@ No installation, login, or prior setup is required.
 
 Once GitHub Pages is enabled, the tool is available at:
 https://sheref001.github.io/line-integral-decision-tree/
-

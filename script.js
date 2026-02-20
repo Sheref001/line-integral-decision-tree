@@ -7,7 +7,8 @@ const State = {
   curve: null,     // "plane" | "space"
   field: null,     // "scalar" | "vector"
   strategy: null,  // "ds" | "dxdy" | "dxdydz" | "dxyz"
-  strategyLabel: null
+  strategyLabel: null,
+  mode: "student"
 };
 
 function resetState() {
@@ -61,6 +62,75 @@ function breadcrumbs() {
   bc.textContent = parts.length ? parts.join(" → ") : "Start by choosing the curve type.";
 }
 
+function setGuideText(text) {
+  const guide = $("guide-text");
+  if (guide) guide.textContent = text;
+}
+
+function setProgress(step) {
+  const map = $("progress-map");
+  if (!map) return;
+  map.querySelectorAll("li").forEach((li) => {
+    const key = li.getAttribute("data-step");
+    li.classList.remove("active", "done");
+    if (key === step) {
+      li.classList.add("active");
+    } else if (
+      (step === "field" && key === "curve") ||
+      (step === "strategy" && (key === "curve" || key === "field")) ||
+      (step === "result" && key !== "result")
+    ) {
+      li.classList.add("done");
+    }
+  });
+}
+
+function renderExample() {
+  const card = $("example-card");
+  if (!card) return;
+
+  if (!State.curve) {
+    card.textContent = "Make a selection to see a worked example.";
+    return;
+  }
+
+  const key = `${State.curve}-${State.field || "?"}-${State.strategy || "?"}`;
+  const examples = {
+    "plane-scalar-ds": `
+      <b>Example:</b> Let C be x=t, y=t^2, 0≤t≤1 and f(x,y)=x+y. <br>
+      Then \\(\\int_C f\\,ds = \\int_0^1 (t+t^2)\\sqrt{1+(2t)^2}\\,dt\\).
+    `,
+    "plane-scalar-dxdy": `
+      <b>Example:</b> Let C be x=t, y=\\sin t, 0≤t≤\\pi and f(x,y)=xy. <br>
+      Then \\(\\int_C f\\,dx = \\int_0^\\pi (t\\sin t)\\,dt\\).
+    `,
+    "plane-vector-dxdy": `
+      <b>Example:</b> \\(\\mathbf{F}=(y, x^2)\\), C: x=t, y=t^2. <br>
+      Then \\(\\int_C \\mathbf{F}\\cdot d\\mathbf{r}=\\int (y\\,dx + x^2\\,dy)\\).
+    `,
+    "space-scalar-ds": `
+      <b>Example:</b> C: (t, t^2, t^3), 0≤t≤1 and f=x+z. <br>
+      Then \\(\\int_C f\\,ds=\\int_0^1 (t+t^3)\\sqrt{1+4t^2+9t^4}\\,dt\\).
+    `,
+    "space-scalar-dxdydz": `
+      <b>Example:</b> C: (\\cos t, \\sin t, t), 0≤t≤2\\pi and f=xz. <br>
+      Then \\(\\int_C f\\,dx=\\int_0^{2\\pi} (\\cos t\\, t)(-\\sin t)\\,dt\\).
+    `,
+    "space-vector-dxyz": `
+      <b>Example:</b> \\(\\mathbf{F}=(yz, xz, xy)\\), C: (t, t^2, t^3). <br>
+      Then \\(\\int_C \\mathbf{F}\\cdot d\\mathbf{r}=\\int (P\\,dx+Q\\,dy+R\\,dz)\\).
+    `,
+  };
+
+  const html = examples[key] || "Complete the choices to see a worked example.";
+  card.innerHTML = html;
+  renderMath([card]);
+}
+
+function setMode(mode) {
+  State.mode = mode;
+}
+
 /* ================================================================
    STEP 1 — Curve
    ================================================================ */
@@ -69,6 +139,8 @@ function renderCurveStep() {
   $("step-curve").classList.add("active");
   $("step-field").classList.add("hidden");
   $("step-method").classList.add("hidden");
+  setProgress("curve");
+  setGuideText("Start by choosing whether the curve lies in the plane or in space.");
 
   const title = document.createElement("h2");
   title.textContent = "Step 1 — What kind of curve is C?";
@@ -106,6 +178,8 @@ function renderFieldStep() {
   $("step-field").classList.add("active");
   $("step-curve").classList.remove("active");
   $("step-curve").classList.add("completed");
+  setProgress("field");
+  setGuideText("Decide whether you are integrating a scalar field or a vector field.");
 
   const title = document.createElement("h2");
   title.textContent = "Step 2 — What type of field?";
@@ -141,6 +215,8 @@ function renderStrategyStep() {
   $("step-method").classList.add("active");
   $("step-field").classList.remove("active");
   $("step-field").classList.add("completed");
+  setProgress("strategy");
+  setGuideText("Choose between arc length (ds) or coordinate form (dx, dy, dz).");
 
   const title = document.createElement("h2");
   title.textContent = "Step 3 — Choose the integration form";
@@ -216,6 +292,8 @@ function showResult() {
   const f = $("formula");
   const e = $("explanation");
   $("result").classList.remove("hidden");
+  setProgress("result");
+  setGuideText("Review the formula and compare with the worked example below.");
 
   let formula = "";
   let explanation = "";
@@ -230,13 +308,13 @@ function showResult() {
     \\sqrt{(x'(t))^2+(y'(t))^2}\\,dt
     \\]
     `;
-    explanation = `
+    explanation = State.mode === "instructor" ? `
     <b>Special case (natural parametrization):</b><br>
     If \\[y=g(x)\\], then
     \\[
     \\int_a^b f(x,g(x))\\sqrt{1+(g'(x))^2}\\,dx
     \\]
-    `;
+    ` : "";
   }
 
   /* Plane scalar dx/dy */
@@ -248,9 +326,9 @@ function showResult() {
     \\int_a^b f(x(t),y(t))x'(t)\\,dt
     \\]
     `;
-    explanation = `
-   Similar formulas apply for \\(\\int_C f(x,y)\\,dy\\).
-    `;
+    explanation = State.mode === "instructor" ? `
+      Similar formulas apply for \\(\\int_C f(x,y)\\,dy\\).
+    ` : "";
   }
 
   /* Plane vector */
@@ -262,9 +340,9 @@ function showResult() {
     \\int_C (P(x,y)\\,dx + Q(x,y)\\,dy)
     \\]
     `;
-    explanation = `
-    This reduces to scalar line integrals of the components.
-    `;
+    explanation = State.mode === "instructor" ? `
+      This reduces to scalar line integrals of the components.
+    ` : "";
   }
 
   /* Space scalar ds */
@@ -277,6 +355,7 @@ function showResult() {
     \\sqrt{(x')^2+(y')^2+(z')^2}\\,dt
     \\]
     `;
+    explanation = State.mode === "instructor" ? "Use arc length when you need geometry of the curve." : "";
   }
 
   /* Space scalar dx/dy/dz */
@@ -288,6 +367,7 @@ function showResult() {
     \\int_a^b f(x(t),y(t),z(t))x'(t)\\,dt
     \\]
     `;
+    explanation = State.mode === "instructor" ? "Choose dx/dy/dz if the problem presents coordinate parametrization." : "";
   }
 
   /* Space vector */
@@ -299,14 +379,15 @@ function showResult() {
     \\int_C (P(x,y,z)\\,dx+Q(x,y,z)\\,dy+R(x,y,z)\\,dz)
     \\]
     `;
-    explanation = `
-    This reduces to scalar line integrals in \\(x,y,z\\).
-    `;
+    explanation = State.mode === "instructor" ? `
+      This reduces to scalar line integrals in \\(x,y,z\\).
+    ` : "";
   }
 
   f.innerHTML = formula;
   e.innerHTML = explanation;
   renderMath([f, e]);
+  renderExample();
 }
 
 /* ================================================================
@@ -320,8 +401,54 @@ document.addEventListener("DOMContentLoaded", () => {
       $("result").classList.add("hidden");
       renderCurveStep();
       breadcrumbs();
+      renderExample();
     };
+  }
+  const modeSelect = $("mode-select");
+  if (modeSelect) {
+    modeSelect.onchange = (e) => {
+      setMode(e.target.value);
+      if (State.strategy) showResult();
+    };
+  }
+
+  const smartInput = $("smart-input");
+  const smartApply = $("smart-apply");
+  const smartFeedback = $("smart-feedback");
+  function applySmartSearch() {
+    if (!smartInput) return;
+    const q = smartInput.value.toLowerCase();
+    resetState();
+    if (q.includes("plane") || q.includes("r2")) State.curve = "plane";
+    if (q.includes("space") || q.includes("r3")) State.curve = "space";
+    if (q.includes("scalar")) State.field = "scalar";
+    if (q.includes("vector")) State.field = "vector";
+    if (q.includes("ds") || q.includes("arc")) State.strategy = "ds";
+    if (q.includes("dx dy") || q.includes("dxdy")) State.strategy = "dxdy";
+    if (q.includes("dx dy dz") || q.includes("dxdydz") || q.includes("dx dz") || q.includes("dy dz")) State.strategy = "dxdydz";
+    if (q.includes("dot") || q.includes("f·dr") || q.includes("dr")) State.strategy = "dxyz";
+
+    if (!State.curve) State.curve = "plane";
+    if (!State.field) State.field = "scalar";
+
+    renderCurveStep();
+    breadcrumbs();
+    renderFieldStep();
+    if (State.strategy) {
+      renderStrategyStep();
+      showResult();
+      if (smartFeedback) smartFeedback.textContent = "Applied your description to a decision path.";
+    } else {
+      if (smartFeedback) smartFeedback.textContent = "We set curve and field. Choose the final strategy.";
+    }
+  }
+  if (smartApply) smartApply.onclick = applySmartSearch;
+  if (smartInput) {
+    smartInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") applySmartSearch();
+    });
   }
   renderCurveStep();
   breadcrumbs();
+  renderExample();
 });

@@ -38,18 +38,62 @@
       </div>
     </header>
 
-  <!-- Breadcrumbs -->
+  <!-- Controls -->
     <div class="controls">
       <div id="breadcrumbs" class="breadcrumbs"></div>
-      <button id="reset-btn" class="ghost">Start Over</button>
+      <div class="control-actions">
+        <label class="mode-toggle">
+          <span>Mode</span>
+          <select id="mode-select">
+            <option value="student">Student (Quick)</option>
+            <option value="instructor">Instructor (Explain)</option>
+          </select>
+        </label>
+        <button id="reset-btn" class="ghost">Start Over</button>
+      </div>
     </div>
 
+    <section class="smart-search">
+      <div class="smart-search-title">Smart Search</div>
+      <p>Type what you know (e.g., “vector field in plane”, “space curve scalar ds”).</p>
+      <div class="smart-search-row">
+        <input id="smart-input" type="text" placeholder="Examples: plane vector, space scalar ds, dx dy..." />
+        <button id="smart-apply" class="primary">Apply</button>
+      </div>
+      <div id="smart-feedback" class="smart-feedback"></div>
+    </section>
+
   <!-- Decision steps -->
-    <main>
-      <section id="step-curve" class="step"></section>
-      <section id="step-field" class="step hidden"></section>
-      <section id="step-method" class="step hidden"></section>
-    </main>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-title">Decision Map</div>
+        <ol id="progress-map" class="progress-map">
+          <li data-step="curve">Curve Type</li>
+          <li data-step="field">Field Type</li>
+          <li data-step="strategy">Integration Form</li>
+          <li data-step="result">Final Formula</li>
+        </ol>
+        <div class="guide-card">
+          <div class="guide-title">Guided Tips</div>
+          <div id="guide-text" class="guide-text">
+            Start by choosing whether the curve lies in the plane or space.
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section id="step-curve" class="step"></section>
+        <section id="step-field" class="step hidden"></section>
+        <section id="step-method" class="step hidden"></section>
+
+        <section class="examples">
+          <h2>Worked Example (updates as you choose)</h2>
+          <div id="example-card" class="example-card">
+            Make a selection to see a worked example.
+          </div>
+        </section>
+      </main>
+    </div>
 
   <!-- Result -->
     <section id="result" class="result hidden">
