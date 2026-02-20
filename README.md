@@ -44,3 +44,12 @@ No installation, login, or prior setup is required.
 Once GitHub Pages is enabled, the tool is available at:
 https://sheref001.github.io/line-integral-decision-tree/
 
+
+
+## 🎮 Bonus Classroom Activity
+
+A Kahoot-style English reading game is included at:
+
+- `game.html`
+
+Students can open the direct URL to this page when hosted (for example through GitHub Pages or your LMS).
