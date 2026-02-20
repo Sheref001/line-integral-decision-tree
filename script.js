@@ -15,6 +15,7 @@ const State = {
   theoremType: null,   // line | surface
   theoremSurfaceKind: null, // flux | curl
   theoremCheck: null,  // yes | no
+  volumeCoord: null, // cartesian | cylindrical | spherical
   mode: "student"
 };
 
@@ -30,6 +31,7 @@ function resetState() {
   State.theoremType = null;
   State.theoremSurfaceKind = null;
   State.theoremCheck = null;
+  State.volumeCoord = null;
 }
 
 /* ================================================================
@@ -78,7 +80,19 @@ function breadcrumbs() {
     if (State.surfaceForm) parts.push(State.surfaceForm);
     if (State.oriented !== null) parts.push(State.oriented === "yes" ? "oriented" : "not oriented");
   }
-  if (State.category === "theorem") {
+    if (State.category === "volume") {
+    if (State.volumeCoord === "cartesian") {
+      formula = `\\[\\iiint_E f(x,y,z)\\,dV=\\iiint_E f(x,y,z)\\,dx\\,dy\\,dz\\]`;
+    }
+    if (State.volumeCoord === "cylindrical") {
+      formula = `\\[\\iiint_E f(r,\\theta,z)\\,r\\,dr\\,d\\theta\\,dz\\]`;
+    }
+    if (State.volumeCoord === "spherical") {
+      formula = `\\[\\iiint_E f(\\rho,\\theta,\\phi)\\,\\rho^2\\sin\\phi\\,d\\rho\\,d\\phi\\,d\\theta\\]`;
+    }
+  }
+
+if (State.category === "theorem") {
     if (State.theoremType) parts.push(State.theoremType);
     if (State.theoremSurfaceKind) parts.push(State.theoremSurfaceKind);
     if (State.theoremCheck !== null) parts.push(State.theoremCheck === "yes" ? "yes" : "no");
@@ -152,6 +166,7 @@ function renderCategoryStep() {
     "step-theorem",
     "step-theorem-type",
     "step-theorem-check",
+    "step-volume",
   ].forEach((id) => {
     const el = $(id);
     if (el) el.classList.add("hidden");
@@ -159,11 +174,15 @@ function renderCategoryStep() {
   clear($("step-category"));
   $("step-category").classList.remove("hidden");
   setProgress("category");
-  setGuideText("Choose the type of integral you are working with.");
+  setGuideText("Hello clever. What type of integral do you want to evaluate today? Let me help you find the right formula.");
 
   const title = document.createElement("h2");
-  title.textContent = "Step 1 — What type of integral?";
+  title.textContent = "Welcome — Choose your integral";
   $("step-category").appendChild(title);
+
+  const subtitle = document.createElement("p");
+  subtitle.textContent = "Pick one and I will guide you step-by-step.";
+  $("step-category").appendChild(subtitle);
 
   $("step-category").appendChild(
     button("Line integral", () => {
@@ -180,6 +199,15 @@ function renderCategoryStep() {
       State.category = "surface";
       breadcrumbs();
       renderSurfaceTypeStep();
+    })
+  );
+
+  $("step-category").appendChild(
+    button("Volume integral", () => {
+      resetState();
+      State.category = "volume";
+      breadcrumbs();
+      renderVolumeStep();
     })
   );
 
@@ -426,6 +454,44 @@ function renderVectorSurfaceFormStep() {
   $("step-surface-type").appendChild(
     button("Graph z=g(x,y)", () => {
       State.surfaceForm = "graph";
+      breadcrumbs();
+      showResult();
+    })
+  );
+}
+
+/* ================================================================
+   VOLUME INTEGRAL FLOW
+   ================================================================ */
+function renderVolumeStep() {
+  clear($("step-volume"));
+  $("step-volume").classList.remove("hidden");
+  setProgress("surface");
+  setGuideText("Choose the coordinate system that best matches the region.");
+
+  const title = document.createElement("h2");
+  title.textContent = "Volume Integrals — Coordinate System";
+  $("step-volume").appendChild(title);
+
+  $("step-volume").appendChild(
+    button("Cartesian (x, y, z)", () => {
+      State.volumeCoord = "cartesian";
+      breadcrumbs();
+      showResult();
+    })
+  );
+
+  $("step-volume").appendChild(
+    button("Cylindrical (r, θ, z)", () => {
+      State.volumeCoord = "cylindrical";
+      breadcrumbs();
+      showResult();
+    })
+  );
+
+  $("step-volume").appendChild(
+    button("Spherical (ρ, θ, φ)", () => {
+      State.volumeCoord = "spherical";
       breadcrumbs();
       showResult();
     })
@@ -773,6 +839,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (q.includes("surface") || q.includes("flux")) State.category = "surface";
     if (q.includes("theorem") || q.includes("stokes") || q.includes("divergence") || q.includes("green") || q.includes("ftli")) State.category = "theorem";
+    if (q.includes("volume") || q.includes("triple")) State.category = "volume";
     if (q.includes("line") && !State.category) State.category = "line";
     if (!State.category) State.category = "line";
 
@@ -814,6 +881,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (State.category === "theorem") {
       renderTheoremTypeStep();
+    }
+    if (State.category === "volume") {
+      renderVolumeStep();
     }
     if (smartFeedback) smartFeedback.textContent = "Applied your description. Continue the flow if needed.";
   }
