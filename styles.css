@@ -81,6 +81,15 @@ body {
   font-size: 0.95rem;
 }
 
+.hero-list a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.hero-list a:hover {
+  text-decoration: underline;
+}
+
 /* ================================================================
    Steps (card-style layout)
    ================================================================ */
@@ -433,6 +442,72 @@ button.primary:hover {
   line-height: 1.5;
 }
 
+.atlas-section {
+  margin-top: 2.5rem;
+}
+
+.atlas-section h2 {
+  font-family: "Fraunces", serif;
+  color: #0f172a;
+}
+
+.atlas {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, auto);
+  gap: 1rem;
+  position: relative;
+}
+
+.atlas.theorems {
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(6, auto);
+}
+
+.node {
+  background: var(--paper);
+  border-radius: 12px;
+  padding: 0.8rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+  border: 1px solid #eef2f6;
+  font-size: 0.9rem;
+}
+
+.root { background: #e5e7eb; }
+.levelone { background: #dbeafe; }
+.leveltwo { background: #dcfce7; }
+.levelthree { background: #ede9fe; }
+.levelfour { background: #ffedd5; }
+.terminal { background: #fee2e2; font-weight: 600; }
+
+.connector {
+  align-self: stretch;
+  justify-self: stretch;
+  position: relative;
+}
+
+.connector.v::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #64748b;
+}
+
+.connector.h::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #64748b;
+}
+
 button.ghost {
   background: transparent;
   border: 1px solid #cbd5e1;
@@ -475,6 +550,10 @@ button.ghost:hover {
   }
   .smart-search-row {
     flex-direction: column;
+  }
+  .atlas, .atlas.theorems {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
   }
 }
 }

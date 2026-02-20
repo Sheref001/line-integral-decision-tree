@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vector Calculus Atlas</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Vector Calculus Atlas</p>
+        <h1>Decision Trees for Surface Integrals and Theorems</h1>
+        <p class="subtitle">
+          A visual atlas that generalizes the decision logic beyond line integrals to
+          surface integrals and major theorems (Green, Stokes, Divergence).
+        </p>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-title">Quick Links</div>
+        <ul class="hero-list">
+          <li><a href="index.html">Line Integral Decision Tool</a></li>
+          <li><a href="#surface">Surface Integrals</a></li>
+          <li><a href="#theorems">Special Theorems</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <section id="surface" class="atlas-section">
+      <h2>II. Surface Integral Formula Atlas</h2>
+      <div class="atlas">
+        <div class="node root" style="grid-area: r1c2;">Surface Integral over $S$</div>
+
+        <div class="node levelone" style="grid-area: r2c1;">
+          Scalar Field<br><br>
+          $\displaystyle \iint\limits_S f(x,y,z)\, dS$
+        </div>
+        <div class="node levelone" style="grid-area: r2c3;">
+          Vector Field (Flux)<br>
+          $\mathbf{F}=\langle P,Q,R\rangle$<br><br>
+          $\displaystyle \iint\limits_S \mathbf{F}\cdot d\mathbf{S}$
+        </div>
+
+        <div class="node leveltwo" style="grid-area: r3c1;">
+          Parametric surface<br>
+          $\mathbf{r}(u,v)=\langle x(u,v),y(u,v),z(u,v)\rangle$
+        </div>
+        <div class="node leveltwo" style="grid-area: r3c2;">
+          Surface graph<br>
+          $z=g(x,y)$
+        </div>
+        <div class="node leveltwo" style="grid-area: r3c3;">
+          Is the surface oriented?
+        </div>
+
+        <div class="node levelthree" style="grid-area: r4c3;">
+          Parametric surface<br>
+          $\mathbf{r}(u,v)=\langle x(u,v),y(u,v),z(u,v)\rangle$
+        </div>
+        <div class="node levelthree" style="grid-area: r4c4;">
+          Surface graph<br>
+          $z=g(x,y)$
+        </div>
+
+        <div class="node levelfour" style="grid-area: r5c1;">
+          $\displaystyle
+          \iint\limits_S f\, dS
+          =
+          \iint\limits_D
+          f(\mathbf{r}(u,v))\left|\mathbf{r}_u\times\mathbf{r}_v\right|\,du\,dv
+          $
+        </div>
+        <div class="node levelfour" style="grid-area: r5c2;">
+          $\displaystyle
+          \iint\limits_S f\, dS
+          =
+          \iint\limits_D f(x,y,g(x,y))\sqrt{1+g_x^2+g_y^2}\,dA
+          $
+        </div>
+
+        <div class="node terminal" style="grid-area: r5c3;">
+          Flux integral NOT defined<br>
+          Orientation required
+        </div>
+
+        <div class="node levelfour" style="grid-area: r5c4;">
+          $\displaystyle
+          \iint\limits_S \mathbf{F}\cdot d\mathbf{S}
+          =
+          \iint\limits_D \mathbf{F}(\mathbf{r}(u,v))\cdot(\mathbf{r}_u\times\mathbf{r}_v)\,du\,dv
+          $
+        </div>
+        <div class="node levelfour" style="grid-area: r5c5;">
+          $\displaystyle
+          \iint\limits_S \mathbf{F}\cdot d\mathbf{S}
+          =
+          \iint\limits_D (-P g_x - Q g_y + R)\, dA
+          $
+        </div>
+
+        <div class="connector v" style="grid-area: c12;"></div>
+        <div class="connector h" style="grid-area: c2a;"></div>
+        <div class="connector v" style="grid-area: c21;"></div>
+        <div class="connector v" style="grid-area: c23;"></div>
+        <div class="connector v" style="grid-area: c31;"></div>
+        <div class="connector v" style="grid-area: c32;"></div>
+        <div class="connector v" style="grid-area: c33;"></div>
+      </div>
+    </section>
+
+    <section id="theorems" class="atlas-section">
+      <h2>III. Special Theorems Atlas (Green, Stokes, Divergence, FTLI)</h2>
+      <div class="atlas theorems">
+        <div class="node root" style="grid-area: r1c2;">Given an integral involving a vector field</div>
+
+        <div class="node levelone" style="grid-area: r2c1;">
+          Line integral<br><br>
+          $\displaystyle \int\limits_C \mathbf{F}\cdot d\mathbf{r}$
+        </div>
+        <div class="node levelone" style="grid-area: r2c3;">
+          Surface integral<br><br>
+          $\displaystyle \iint\limits_S \mathbf{F}\cdot d\mathbf{S}$
+        </div>
+
+        <div class="node leveltwo" style="grid-area: r3c1;">
+          Is the vector field conservative?<br>
+          $\mathbf{F}=\nabla f$
+        </div>
+
+        <div class="node leveltwo" style="grid-area: r3c3;">
+          What type of surface integral?
+        </div>
+
+        <div class="node levelfour" style="grid-area: r4c1;">
+          $\displaystyle
+          \int\limits_C \mathbf{F}\cdot d\mathbf{r}=f(B)-f(A)$<br><br>
+          \textbf{FTLI}
+        </div>
+        <div class="node terminal" style="grid-area: r4c2;">
+          FTLI not applicable<br>
+          Field is not conservative
+        </div>
+
+        <div class="node levelthree" style="grid-area: r4c3;">
+          Flux integral<br>
+          $\displaystyle \iint\limits_S \mathbf{F}\cdot d\mathbf{S}$
+        </div>
+        <div class="node levelthree" style="grid-area: r4c4;">
+          Curl integral<br>
+          $\displaystyle \iint\limits_S (\nabla\times\mathbf{F})\cdot d\mathbf{S}$
+        </div>
+
+        <div class="node leveltwo" style="grid-area: r5c3;">
+          Is the surface closed and oriented outward?
+        </div>
+        <div class="node leveltwo" style="grid-area: r5c4;">
+          Does the surface have a boundary curve?
+        </div>
+
+        <div class="node levelfour" style="grid-area: r6c3;">
+          $\displaystyle
+          \iint\limits_S \mathbf{F}\cdot d\mathbf{S}=
+          \iiint\limits_E (\nabla\cdot\mathbf{F})\,dV$<br><br>
+          \textbf{Divergence Theorem}
+        </div>
+        <div class="node terminal" style="grid-area: r6c4;">
+          Divergence Theorem cannot be applied as stated
+        </div>
+
+        <div class="node levelfour" style="grid-area: r6c5;">
+          $\displaystyle
+          \iint\limits_S (\nabla\times\mathbf{F})\cdot d\mathbf{S}=
+          \oint_C \mathbf{F}\cdot d\mathbf{r}$<br><br>
+          \textbf{Stokes' Theorem}
+        </div>
+        <div class="node terminal" style="grid-area: r6c6;">
+          Stokes' Theorem not applicable
+        </div>
+
+        <div class="connector v" style="grid-area: c12;"></div>
+        <div class="connector h" style="grid-area: c2a;"></div>
+        <div class="connector v" style="grid-area: c31;"></div>
+        <div class="connector v" style="grid-area: c33;"></div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-grid">
+        <div>
+          © Sheref Nasereldin, Ph.D.<br>
+          Assistant Professor of Mathematics<br>
+          University of Prince Edward Island (Cairo Campus)
+        </div>
+        <div class="footer-note">Educational use only</div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
