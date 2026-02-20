@@ -69,9 +69,10 @@
       <aside class="sidebar">
         <div class="sidebar-title">Decision Map</div>
         <ol id="progress-map" class="progress-map">
-          <li data-step="curve">Curve Type</li>
-          <li data-step="field">Field Type</li>
-          <li data-step="strategy">Integration Form</li>
+          <li data-step="category">Integral Type</li>
+          <li data-step="curve">Line Integral Details</li>
+          <li data-step="surface">Surface Integral Details</li>
+          <li data-step="theorem">Theorem Selection</li>
           <li data-step="result">Final Formula</li>
         </ol>
         <div class="guide-card">
@@ -83,9 +84,16 @@
       </aside>
 
       <main class="main">
-        <section id="step-curve" class="step"></section>
+        <section id="step-category" class="step"></section>
+        <section id="step-curve" class="step hidden"></section>
         <section id="step-field" class="step hidden"></section>
         <section id="step-method" class="step hidden"></section>
+        <section id="step-surface" class="step hidden"></section>
+        <section id="step-surface-type" class="step hidden"></section>
+        <section id="step-orient" class="step hidden"></section>
+        <section id="step-theorem" class="step hidden"></section>
+        <section id="step-theorem-type" class="step hidden"></section>
+        <section id="step-theorem-check" class="step hidden"></section>
 
         <section class="examples">
           <h2>Worked Example (updates as you choose)</h2>

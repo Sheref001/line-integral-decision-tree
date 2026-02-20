@@ -4,18 +4,32 @@ console.log("script.js loaded");
    STATE
    ================================================================ */
 const State = {
-  curve: null,     // "plane" | "space"
-  field: null,     // "scalar" | "vector"
-  strategy: null,  // "ds" | "dxdy" | "dxdydz" | "dxyz"
+  category: null,  // line | surface | theorem
+  curve: null,     // plane | space
+  field: null,     // scalar | vector
+  strategy: null,  // ds | dxdy | dxdydz | dxyz
   strategyLabel: null,
+  surfaceType: null,   // scalar | vector
+  surfaceForm: null,   // param | graph
+  oriented: null,      // yes | no
+  theoremType: null,   // line | surface
+  theoremSurfaceKind: null, // flux | curl
+  theoremCheck: null,  // yes | no
   mode: "student"
 };
 
 function resetState() {
+  State.category = null;
   State.curve = null;
   State.field = null;
   State.strategy = null;
   State.strategyLabel = null;
+  State.surfaceType = null;
+  State.surfaceForm = null;
+  State.oriented = null;
+  State.theoremType = null;
+  State.theoremSurfaceKind = null;
+  State.theoremCheck = null;
 }
 
 /* ================================================================
@@ -47,19 +61,29 @@ function renderMath(nodes) {
 }
 
 /* ================================================================
-   BREADCRUMBS
+   BREADCRUMBS + GUIDE
    ================================================================ */
 function breadcrumbs() {
   const bc = $("breadcrumbs");
   if (!bc) return;
-  bc.innerHTML = "";
-
   const parts = [];
-  if (State.curve) parts.push(State.curve === "plane" ? "Plane curve ℝ²" : "Space curve ℝ³");
-  if (State.field) parts.push(State.field === "scalar" ? "Scalar field" : "Vector field");
-  if (State.strategy) parts.push(State.strategyLabel);
-
-  bc.textContent = parts.length ? parts.join(" → ") : "Start by choosing the curve type.";
+  if (State.category) parts.push(State.category);
+  if (State.category === "line") {
+    if (State.curve) parts.push(State.curve);
+    if (State.field) parts.push(State.field);
+    if (State.strategy) parts.push(State.strategyLabel);
+  }
+  if (State.category === "surface") {
+    if (State.surfaceType) parts.push(State.surfaceType);
+    if (State.surfaceForm) parts.push(State.surfaceForm);
+    if (State.oriented !== null) parts.push(State.oriented === "yes" ? "oriented" : "not oriented");
+  }
+  if (State.category === "theorem") {
+    if (State.theoremType) parts.push(State.theoremType);
+    if (State.theoremSurfaceKind) parts.push(State.theoremSurfaceKind);
+    if (State.theoremCheck !== null) parts.push(State.theoremCheck === "yes" ? "yes" : "no");
+  }
+  bc.textContent = parts.length ? parts.join(" → ") : "Start by choosing the integral type.";
 }
 
 function setGuideText(text) {
@@ -75,11 +99,13 @@ function setProgress(step) {
     li.classList.remove("active", "done");
     if (key === step) {
       li.classList.add("active");
-    } else if (
-      (step === "field" && key === "curve") ||
-      (step === "strategy" && (key === "curve" || key === "field")) ||
-      (step === "result" && key !== "result")
-    ) {
+    } else if (step === "result" && key !== "result") {
+      li.classList.add("done");
+    } else if (step === "curve" && key === "category") {
+      li.classList.add("done");
+    } else if (step === "surface" && key === "category") {
+      li.classList.add("done");
+    } else if (step === "theorem" && key === "category") {
       li.classList.add("done");
     }
   });
@@ -89,70 +115,101 @@ function renderExample() {
   const card = $("example-card");
   if (!card) return;
 
-  if (!State.curve) {
+  if (!State.category) {
     card.textContent = "Make a selection to see a worked example.";
     return;
   }
 
-  const key = `${State.curve}-${State.field || "?"}-${State.strategy || "?"}`;
+  const key = [State.category, State.curve, State.field, State.strategy, State.surfaceType, State.surfaceForm, State.theoremType, State.theoremSurfaceKind, State.theoremCheck].join("-");
   const examples = {
-    "plane-scalar-ds": `
-      <b>Example:</b> Let C be x=t, y=t^2, 0≤t≤1 and f(x,y)=x+y. <br>
-      Then \\(\\int_C f\\,ds = \\int_0^1 (t+t^2)\\sqrt{1+(2t)^2}\\,dt\\).
-    `,
-    "plane-scalar-dxdy": `
-      <b>Example:</b> Let C be x=t, y=\\sin t, 0≤t≤\\pi and f(x,y)=xy. <br>
-      Then \\(\\int_C f\\,dx = \\int_0^\\pi (t\\sin t)\\,dt\\).
-    `,
-    "plane-vector-dxdy": `
-      <b>Example:</b> \\(\\mathbf{F}=(y, x^2)\\), C: x=t, y=t^2. <br>
-      Then \\(\\int_C \\mathbf{F}\\cdot d\\mathbf{r}=\\int (y\\,dx + x^2\\,dy)\\).
-    `,
-    "space-scalar-ds": `
-      <b>Example:</b> C: (t, t^2, t^3), 0≤t≤1 and f=x+z. <br>
-      Then \\(\\int_C f\\,ds=\\int_0^1 (t+t^3)\\sqrt{1+4t^2+9t^4}\\,dt\\).
-    `,
-    "space-scalar-dxdydz": `
-      <b>Example:</b> C: (\\cos t, \\sin t, t), 0≤t≤2\\pi and f=xz. <br>
-      Then \\(\\int_C f\\,dx=\\int_0^{2\\pi} (\\cos t\\, t)(-\\sin t)\\,dt\\).
-    `,
-    "space-vector-dxyz": `
-      <b>Example:</b> \\(\\mathbf{F}=(yz, xz, xy)\\), C: (t, t^2, t^3). <br>
-      Then \\(\\int_C \\mathbf{F}\\cdot d\\mathbf{r}=\\int (P\\,dx+Q\\,dy+R\\,dz)\\).
-    `,
+    "line-plane-scalar-ds": "<b>Example:</b> C: x=t, y=t^2, 0≤t≤1, f=x+y. Then \\int_C f\\,ds=\\int_0^1 (t+t^2)\\sqrt{1+4t^2}\\,dt.",
+    "line-plane-vector-dxdy": "<b>Example:</b> F=(y,x^2), C: (t,t^2). Then \\int_C F·dr=\\int (y\\,dx+x^2\\,dy).",
+    "line-space-scalar-ds": "<b>Example:</b> C: (t,t^2,t^3), f=x+z. Then \\int_C f\\,ds=\\int_0^1 (t+t^3)\\sqrt{1+4t^2+9t^4}\\,dt.",
+    "surface-scalar-param": "<b>Example:</b> r(u,v)=(u,v,u^2+v^2). Use |r_u×r_v| in the integral.",
+    "surface-scalar-graph": "<b>Example:</b> z=g(x,y)=x^2+y^2. Use \\sqrt{1+g_x^2+g_y^2}.",
+    "surface-vector-param": "<b>Example:</b> F=(x,y,z) on r(u,v). Use F·(r_u×r_v).",
+    "surface-vector-graph": "<b>Example:</b> Flux through z=g(x,y). Use (-P g_x - Q g_y + R).",
+    "theorem-line-yes": "<b>Example:</b> Conservative field: F=∇f. Then \\int_C F·dr=f(B)-f(A).",
+    "theorem-surface-flux-yes": "<b>Example:</b> Closed surface flux: use Divergence Theorem.",
+    "theorem-surface-curl-yes": "<b>Example:</b> Surface with boundary: use Stokes' Theorem.",
   };
 
-  const html = examples[key] || "Complete the choices to see a worked example.";
-  card.innerHTML = html;
+  card.innerHTML = examples[key] || "Complete the choices to see a worked example.";
   renderMath([card]);
 }
 
-function setMode(mode) {
-  State.mode = mode;
+/* ================================================================
+   STEP 0 — Category
+   ================================================================ */
+function renderCategoryStep() {
+  [
+    "step-curve",
+    "step-field",
+    "step-method",
+    "step-surface",
+    "step-surface-type",
+    "step-orient",
+    "step-theorem",
+    "step-theorem-type",
+    "step-theorem-check",
+  ].forEach((id) => {
+    const el = $(id);
+    if (el) el.classList.add("hidden");
+  });
+  clear($("step-category"));
+  $("step-category").classList.remove("hidden");
+  setProgress("category");
+  setGuideText("Choose the type of integral you are working with.");
+
+  const title = document.createElement("h2");
+  title.textContent = "Step 1 — What type of integral?";
+  $("step-category").appendChild(title);
+
+  $("step-category").appendChild(
+    button("Line integral", () => {
+      resetState();
+      State.category = "line";
+      breadcrumbs();
+      renderCurveStep();
+    })
+  );
+
+  $("step-category").appendChild(
+    button("Surface integral", () => {
+      resetState();
+      State.category = "surface";
+      breadcrumbs();
+      renderSurfaceTypeStep();
+    })
+  );
+
+  $("step-category").appendChild(
+    button("Use a theorem", () => {
+      resetState();
+      State.category = "theorem";
+      breadcrumbs();
+      renderTheoremTypeStep();
+    })
+  );
 }
 
 /* ================================================================
-   STEP 1 — Curve
+   LINE INTEGRAL FLOW (existing)
    ================================================================ */
 function renderCurveStep() {
   clear($("step-curve"));
-  $("step-curve").classList.add("active");
+  $("step-curve").classList.remove("hidden");
   $("step-field").classList.add("hidden");
   $("step-method").classList.add("hidden");
   setProgress("curve");
-  setGuideText("Start by choosing whether the curve lies in the plane or in space.");
+  setGuideText("Choose whether the curve lies in the plane or in space.");
 
   const title = document.createElement("h2");
-  title.textContent = "Step 1 — What kind of curve is C?";
+  title.textContent = "Line Integrals — Curve Type";
   $("step-curve").appendChild(title);
-
-  const desc = document.createElement("p");
-  desc.textContent = "Choose whether the path lies in the plane or in space.";
-  $("step-curve").appendChild(desc);
 
   $("step-curve").appendChild(
     button("Plane Curve ℝ²", () => {
-      resetState();
       State.curve = "plane";
       breadcrumbs();
       renderFieldStep();
@@ -161,7 +218,6 @@ function renderCurveStep() {
 
   $("step-curve").appendChild(
     button("Space Curve ℝ³", () => {
-      resetState();
       State.curve = "space";
       breadcrumbs();
       renderFieldStep();
@@ -169,25 +225,16 @@ function renderCurveStep() {
   );
 }
 
-/* ================================================================
-   STEP 2 — Field
-   ================================================================ */
 function renderFieldStep() {
   clear($("step-field"));
   $("step-field").classList.remove("hidden");
-  $("step-field").classList.add("active");
-  $("step-curve").classList.remove("active");
-  $("step-curve").classList.add("completed");
-  setProgress("field");
+  $("step-method").classList.add("hidden");
+  setProgress("curve");
   setGuideText("Decide whether you are integrating a scalar field or a vector field.");
 
   const title = document.createElement("h2");
-  title.textContent = "Step 2 — What type of field?";
+  title.textContent = "Line Integrals — Field Type";
   $("step-field").appendChild(title);
-
-  const desc = document.createElement("p");
-  desc.textContent = "Scalar fields integrate a function; vector fields integrate a dot product.";
-  $("step-field").appendChild(desc);
 
   $("step-field").appendChild(
     button("Scalar Field", () => {
@@ -206,27 +253,16 @@ function renderFieldStep() {
   );
 }
 
-/* ================================================================
-   STEP 3 — Strategy (matches TikZ exactly)
-   ================================================================ */
 function renderStrategyStep() {
   clear($("step-method"));
   $("step-method").classList.remove("hidden");
-  $("step-method").classList.add("active");
-  $("step-field").classList.remove("active");
-  $("step-field").classList.add("completed");
-  setProgress("strategy");
-  setGuideText("Choose between arc length (ds) or coordinate form (dx, dy, dz).");
+  setProgress("curve");
+  setGuideText("Choose arc length (ds) or coordinate form (dx, dy, dz).");
 
   const title = document.createElement("h2");
-  title.textContent = "Step 3 — Choose the integration form";
+  title.textContent = "Line Integrals — Integration Form";
   $("step-method").appendChild(title);
 
-  const desc = document.createElement("p");
-  desc.textContent = "Pick the form that matches the information given in the problem.";
-  $("step-method").appendChild(desc);
-
-  /* ---------------- Plane + Scalar ---------------- */
   if (State.curve === "plane" && State.field === "scalar") {
     $("step-method").appendChild(
       button("Integrate w.r.t. arc length (ds)", () => {
@@ -247,7 +283,6 @@ function renderStrategyStep() {
     );
   }
 
-  /* ---------------- Plane + Vector (forced) ---------------- */
   if (State.curve === "plane" && State.field === "vector") {
     State.strategy = "dxdy";
     State.strategyLabel = "dx, dy";
@@ -255,7 +290,6 @@ function renderStrategyStep() {
     showResult();
   }
 
-  /* ---------------- Space + Scalar ---------------- */
   if (State.curve === "space" && State.field === "scalar") {
     $("step-method").appendChild(
       button("Integrate w.r.t. arc length (ds)", () => {
@@ -276,7 +310,6 @@ function renderStrategyStep() {
     );
   }
 
-  /* ---------------- Space + Vector (forced) ---------------- */
   if (State.curve === "space" && State.field === "vector") {
     State.strategy = "dxyz";
     State.strategyLabel = "dx, dy, dz";
@@ -286,102 +319,419 @@ function renderStrategyStep() {
 }
 
 /* ================================================================
-   FINAL FORMULAS (copied from TikZ)
+   SURFACE INTEGRAL FLOW (from TikZ)
+   ================================================================ */
+function renderSurfaceTypeStep() {
+  clear($("step-surface"));
+  $("step-surface").classList.remove("hidden");
+  $("step-surface-type").classList.add("hidden");
+  $("step-orient").classList.add("hidden");
+  setProgress("surface");
+  setGuideText("Surface integrals split into scalar integrals and flux integrals.");
+
+  const title = document.createElement("h2");
+  title.textContent = "Surface Integrals — Field Type";
+  $("step-surface").appendChild(title);
+
+  $("step-surface").appendChild(
+    button("Scalar Field", () => {
+      State.surfaceType = "scalar";
+      breadcrumbs();
+      renderSurfaceFormStep();
+    })
+  );
+
+  $("step-surface").appendChild(
+    button("Vector Field (Flux)", () => {
+      State.surfaceType = "vector";
+      breadcrumbs();
+      renderOrientationStep();
+    })
+  );
+}
+
+function renderSurfaceFormStep() {
+  clear($("step-surface-type"));
+  $("step-surface-type").classList.remove("hidden");
+  setProgress("surface");
+  setGuideText("Choose the surface description: parametric or graph.");
+
+  const title = document.createElement("h2");
+  title.textContent = "Surface Integrals — Surface Form";
+  $("step-surface-type").appendChild(title);
+
+  $("step-surface-type").appendChild(
+    button("Parametric surface r(u,v)", () => {
+      State.surfaceForm = "param";
+      breadcrumbs();
+      showResult();
+    })
+  );
+
+  $("step-surface-type").appendChild(
+    button("Graph z=g(x,y)", () => {
+      State.surfaceForm = "graph";
+      breadcrumbs();
+      showResult();
+    })
+  );
+}
+
+function renderOrientationStep() {
+  clear($("step-orient"));
+  $("step-orient").classList.remove("hidden");
+  $("step-surface-type").classList.add("hidden");
+  setProgress("surface");
+  setGuideText("Flux integrals require orientation.");
+
+  const title = document.createElement("h2");
+  title.textContent = "Surface Integrals — Orientation";
+  $("step-orient").appendChild(title);
+
+  $("step-orient").appendChild(
+    button("Yes, oriented", () => {
+      State.oriented = "yes";
+      breadcrumbs();
+      renderVectorSurfaceFormStep();
+    })
+  );
+
+  $("step-orient").appendChild(
+    button("No", () => {
+      State.oriented = "no";
+      breadcrumbs();
+      showResult();
+    })
+  );
+}
+
+function renderVectorSurfaceFormStep() {
+  clear($("step-surface-type"));
+  $("step-surface-type").classList.remove("hidden");
+  setProgress("surface");
+  setGuideText("Choose the surface description for flux.");
+
+  const title = document.createElement("h2");
+  title.textContent = "Surface Integrals — Surface Form";
+  $("step-surface-type").appendChild(title);
+
+  $("step-surface-type").appendChild(
+    button("Parametric surface r(u,v)", () => {
+      State.surfaceForm = "param";
+      breadcrumbs();
+      showResult();
+    })
+  );
+
+  $("step-surface-type").appendChild(
+    button("Graph z=g(x,y)", () => {
+      State.surfaceForm = "graph";
+      breadcrumbs();
+      showResult();
+    })
+  );
+}
+
+/* ================================================================
+   THEOREM FLOW (FTLI / Divergence / Stokes / Green)
+   ================================================================ */
+function renderTheoremTypeStep() {
+  clear($("step-theorem"));
+  $("step-theorem").classList.remove("hidden");
+  $("step-theorem-type").classList.add("hidden");
+  $("step-theorem-check").classList.add("hidden");
+  setProgress("theorem");
+  setGuideText("Choose the type of integral where you want a theorem shortcut.");
+
+  const title = document.createElement("h2");
+  title.textContent = "Theorem Guide — Integral Type";
+  $("step-theorem").appendChild(title);
+
+  $("step-theorem").appendChild(
+    button("Line integral", () => {
+      State.theoremType = "line";
+      breadcrumbs();
+      renderTheoremLineCheck();
+    })
+  );
+
+  $("step-theorem").appendChild(
+    button("Surface integral", () => {
+      State.theoremType = "surface";
+      breadcrumbs();
+      renderTheoremSurfaceType();
+    })
+  );
+}
+
+function renderTheoremLineCheck() {
+  clear($("step-theorem-type"));
+  $("step-theorem-type").classList.remove("hidden");
+  $("step-theorem-check").classList.add("hidden");
+  setProgress("theorem");
+  setGuideText("Check if the vector field is conservative for FTLI, or if Green's theorem applies.");
+
+  const title = document.createElement("h2");
+  title.textContent = "Line Integral Theorems";
+  $("step-theorem-type").appendChild(title);
+
+  $("step-theorem-type").appendChild(
+    button("Field is conservative (F = ∇f)", () => {
+      State.theoremCheck = "yes";
+      State.theoremSurfaceKind = "ftli";
+      breadcrumbs();
+      showResult();
+    })
+  );
+
+  $("step-theorem-type").appendChild(
+    button("Closed plane curve; apply Green's theorem", () => {
+      State.theoremCheck = "yes";
+      State.theoremSurfaceKind = "green";
+      breadcrumbs();
+      showResult();
+    })
+  );
+
+  $("step-theorem-type").appendChild(
+    button("Neither applies", () => {
+      State.theoremCheck = "no";
+      State.theoremSurfaceKind = "ftli";
+      breadcrumbs();
+      showResult();
+    })
+  );
+}
+
+function renderTheoremSurfaceType() {
+  clear($("step-theorem-type"));
+  $("step-theorem-type").classList.remove("hidden");
+  $("step-theorem-check").classList.add("hidden");
+  setProgress("theorem");
+  setGuideText("Choose flux or curl surface integral.");
+
+  const title = document.createElement("h2");
+  title.textContent = "Surface Integral Theorems";
+  $("step-theorem-type").appendChild(title);
+
+  $("step-theorem-type").appendChild(
+    button("Flux integral", () => {
+      State.theoremSurfaceKind = "flux";
+      breadcrumbs();
+      renderTheoremSurfaceCheck();
+    })
+  );
+
+  $("step-theorem-type").appendChild(
+    button("Curl integral", () => {
+      State.theoremSurfaceKind = "curl";
+      breadcrumbs();
+      renderTheoremSurfaceCheck();
+    })
+  );
+}
+
+function renderTheoremSurfaceCheck() {
+  clear($("step-theorem-check"));
+  $("step-theorem-check").classList.remove("hidden");
+  setProgress("theorem");
+
+  const title = document.createElement("h2");
+  if (State.theoremSurfaceKind === "flux") {
+    setGuideText("Divergence Theorem applies if the surface is closed and oriented outward.");
+    title.textContent = "Divergence Theorem Check";
+  } else {
+    setGuideText("Stokes' Theorem applies if the surface has a boundary curve.");
+    title.textContent = "Stokes' Theorem Check";
+  }
+  $("step-theorem-check").appendChild(title);
+
+  $("step-theorem-check").appendChild(
+    button("Yes", () => {
+      State.theoremCheck = "yes";
+      breadcrumbs();
+      showResult();
+    })
+  );
+
+  $("step-theorem-check").appendChild(
+    button("No", () => {
+      State.theoremCheck = "no";
+      breadcrumbs();
+      showResult();
+    })
+  );
+}
+
+/* ================================================================
+   FINAL FORMULAS
    ================================================================ */
 function showResult() {
   const f = $("formula");
   const e = $("explanation");
   $("result").classList.remove("hidden");
   setProgress("result");
-  setGuideText("Review the formula and compare with the worked example below.");
 
   let formula = "";
   let explanation = "";
 
-  /* Plane scalar ds */
-  if (State.curve === "plane" && State.field === "scalar" && State.strategy === "ds") {
-    formula = `
-    \\[
-    \\int_C f(x,y)\\,ds
-    =
-    \\int_a^b f(x(t),y(t))
-    \\sqrt{(x'(t))^2+(y'(t))^2}\\,dt
-    \\]
-    `;
-    explanation = State.mode === "instructor" ? `
-    <b>Special case (natural parametrization):</b><br>
-    If \\[y=g(x)\\], then
-    \\[
-    \\int_a^b f(x,g(x))\\sqrt{1+(g'(x))^2}\\,dx
-    \\]
-    ` : "";
+  if (State.category === "line") {
+    if (State.curve === "plane" && State.field === "scalar" && State.strategy === "ds") {
+      formula = `
+      \\
+      \\
+      \\[
+      \\int_C f(x,y)\\,ds
+      =
+      \\int_a^b f(x(t),y(t))\\sqrt{(x'(t))^2+(y'(t))^2}\\,dt
+      \\]
+      `;
+      explanation = State.mode === "instructor" ? `If y=g(x), then \\int_a^b f(x,g(x))\\sqrt{1+(g'(x))^2}\\,dx.` : "";
+    }
+
+    if (State.curve === "plane" && State.field === "scalar" && State.strategy === "dxdy") {
+      formula = `
+      \\[
+      \\int_C f(x,y)\\,dx
+      =
+      \\int_a^b f(x(t),y(t))x'(t)\\,dt
+      \\]
+      `;
+      explanation = State.mode === "instructor" ? "Similar formula for dy." : "";
+    }
+
+    if (State.curve === "plane" && State.field === "vector") {
+      formula = `
+      \\[
+      \\int_C \\mathbf{F}\\cdot d\\mathbf{r}=
+      \\int_C (P\\,dx+Q\\,dy)
+      \\]
+      `;
+    }
+
+    if (State.curve === "space" && State.field === "scalar" && State.strategy === "ds") {
+      formula = `
+      \\[
+      \\int_C f(x,y,z)\\,ds
+      =
+      \\int_a^b f(x(t),y(t),z(t))\\sqrt{(x')^2+(y')^2+(z')^2}\\,dt
+      \\]
+      `;
+    }
+
+    if (State.curve === "space" && State.field === "scalar" && State.strategy === "dxdydz") {
+      formula = `
+      \\[
+      \\int_C f(x,y,z)\\,dx
+      =
+      \\int_a^b f(x(t),y(t),z(t))x'(t)\\,dt
+      \\]
+      `;
+    }
+
+    if (State.curve === "space" && State.field === "vector") {
+      formula = `
+      \\[
+      \\int_C \\mathbf{F}\\cdot d\\mathbf{r}=
+      \\int_C (P\\,dx+Q\\,dy+R\\,dz)
+      \\]
+      `;
+    }
   }
 
-  /* Plane scalar dx/dy */
-  if (State.curve === "plane" && State.field === "scalar" && State.strategy === "dxdy") {
-    formula = `
-    \\[
-    \\int_C f(x,y)\\,dx
-    =
-    \\int_a^b f(x(t),y(t))x'(t)\\,dt
-    \\]
-    `;
-    explanation = State.mode === "instructor" ? `
-      Similar formulas apply for \\(\\int_C f(x,y)\\,dy\\).
-    ` : "";
+  if (State.category === "surface") {
+    if (State.surfaceType === "scalar" && State.surfaceForm === "param") {
+      formula = `
+      \\[
+      \\iint_S f\\,dS=
+      \\iint_D f(\\mathbf{r}(u,v))\\,|\\mathbf{r}_u\\times\\mathbf{r}_v|\\,du\\,dv
+      \\]
+      `;
+    }
+
+    if (State.surfaceType === "scalar" && State.surfaceForm === "graph") {
+      formula = `
+      \\[
+      \\iint_S f\\,dS=
+      \\iint_D f(x,y,g(x,y))\\sqrt{1+g_x^2+g_y^2}\\,dA
+      \\]
+      `;
+    }
+
+    if (State.surfaceType === "vector" && State.oriented === "no") {
+      formula = `\\[\\text{Flux integral not defined without orientation.}\\]`;
+    }
+
+    if (State.surfaceType === "vector" && State.oriented === "yes" && State.surfaceForm === "param") {
+      formula = `
+      \\[
+      \\iint_S \\mathbf{F}\\cdot d\\mathbf{S}=
+      \\iint_D \\mathbf{F}(\\mathbf{r}(u,v))\\cdot(\\mathbf{r}_u\\times\\mathbf{r}_v)\\,du\\,dv
+      \\]
+      `;
+    }
+
+    if (State.surfaceType === "vector" && State.oriented === "yes" && State.surfaceForm === "graph") {
+      formula = `
+      \\[
+      \\iint_S \\mathbf{F}\\cdot d\\mathbf{S}=
+      \\iint_D (-P g_x - Q g_y + R)\\,dA
+      \\]
+      `;
+    }
   }
 
-  /* Plane vector */
-  if (State.curve === "plane" && State.field === "vector") {
-    formula = `
-    \\[
-    \\int_C \\mathbf{F}\\cdot d\\mathbf{r}
-    =
-    \\int_C (P(x,y)\\,dx + Q(x,y)\\,dy)
-    \\]
-    `;
-    explanation = State.mode === "instructor" ? `
-      This reduces to scalar line integrals of the components.
-    ` : "";
-  }
+  if (State.category === "theorem") {
+    if (State.theoremType === "line" && State.theoremSurfaceKind === "ftli" && State.theoremCheck === "yes") {
+      formula = `
+      \\[
+      \\int_C \\mathbf{F}\\cdot d\\mathbf{r}=f(B)-f(A)
+      \\]
+      `;
+      explanation = "Fundamental Theorem of Line Integrals";
+    }
 
-  /* Space scalar ds */
-  if (State.curve === "space" && State.field === "scalar" && State.strategy === "ds") {
-    formula = `
-    \\[
-    \\int_C f(x,y,z)\\,ds
-    =
-    \\int_a^b f(x(t),y(t),z(t))
-    \\sqrt{(x')^2+(y')^2+(z')^2}\\,dt
-    \\]
-    `;
-    explanation = State.mode === "instructor" ? "Use arc length when you need geometry of the curve." : "";
-  }
+    if (State.theoremType === "line" && State.theoremSurfaceKind === "ftli" && State.theoremCheck === "no") {
+      formula = `\\[\\text{FTLI not applicable.}\\]`;
+    }
 
-  /* Space scalar dx/dy/dz */
-  if (State.curve === "space" && State.field === "scalar" && State.strategy === "dxdydz") {
-    formula = `
-    \\[
-    \\int_C f(x,y,z)\\,dx
-    =
-    \\int_a^b f(x(t),y(t),z(t))x'(t)\\,dt
-    \\]
-    `;
-    explanation = State.mode === "instructor" ? "Choose dx/dy/dz if the problem presents coordinate parametrization." : "";
-  }
+    if (State.theoremType === "line" && State.theoremSurfaceKind === "green") {
+      formula = `
+      \\[
+      \\oint_C (P\\,dx+Q\\,dy)=
+      \\iint_D \\left(\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}\\right) dA
+      \\]
+      `;
+      explanation = "Green's Theorem";
+    }
 
-  /* Space vector */
-  if (State.curve === "space" && State.field === "vector") {
-    formula = `
-    \\[
-    \\int_C \\mathbf{F}\\cdot d\\mathbf{r}
-    =
-    \\int_C (P(x,y,z)\\,dx+Q(x,y,z)\\,dy+R(x,y,z)\\,dz)
-    \\]
-    `;
-    explanation = State.mode === "instructor" ? `
-      This reduces to scalar line integrals in \\(x,y,z\\).
-    ` : "";
+    if (State.theoremType === "surface" && State.theoremSurfaceKind === "flux" && State.theoremCheck === "yes") {
+      formula = `
+      \\[
+      \\iint_S \\mathbf{F}\\cdot d\\mathbf{S}=
+      \\iiint_E (\\nabla\\cdot\\mathbf{F})\\,dV
+      \\]
+      `;
+      explanation = "Divergence Theorem";
+    }
+
+    if (State.theoremType === "surface" && State.theoremSurfaceKind === "flux" && State.theoremCheck === "no") {
+      formula = `\\[\\text{Surface must be closed and oriented outward.}\\]`;
+    }
+
+    if (State.theoremType === "surface" && State.theoremSurfaceKind === "curl" && State.theoremCheck === "yes") {
+      formula = `
+      \\[
+      \\iint_S (\\nabla\\times\\mathbf{F})\\cdot d\\mathbf{S}=
+      \\oint_C \\mathbf{F}\\cdot d\\mathbf{r}
+      \\]
+      `;
+      explanation = "Stokes' Theorem";
+    }
+
+    if (State.theoremType === "surface" && State.theoremSurfaceKind === "curl" && State.theoremCheck === "no") {
+      formula = `\\[\\text{Surface must have a boundary curve.}\\]`;
+    }
   }
 
   f.innerHTML = formula;
@@ -399,16 +749,17 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.onclick = () => {
       resetState();
       $("result").classList.add("hidden");
-      renderCurveStep();
+      renderCategoryStep();
       breadcrumbs();
       renderExample();
     };
   }
+
   const modeSelect = $("mode-select");
   if (modeSelect) {
     modeSelect.onchange = (e) => {
-      setMode(e.target.value);
-      if (State.strategy) showResult();
+      State.mode = e.target.value;
+      if (State.category && (State.strategy || State.surfaceForm || State.theoremCheck !== null)) showResult();
     };
   }
 
@@ -419,36 +770,62 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!smartInput) return;
     const q = smartInput.value.toLowerCase();
     resetState();
-    if (q.includes("plane") || q.includes("r2")) State.curve = "plane";
-    if (q.includes("space") || q.includes("r3")) State.curve = "space";
-    if (q.includes("scalar")) State.field = "scalar";
-    if (q.includes("vector")) State.field = "vector";
-    if (q.includes("ds") || q.includes("arc")) State.strategy = "ds";
-    if (q.includes("dx dy") || q.includes("dxdy")) State.strategy = "dxdy";
-    if (q.includes("dx dy dz") || q.includes("dxdydz") || q.includes("dx dz") || q.includes("dy dz")) State.strategy = "dxdydz";
-    if (q.includes("dot") || q.includes("f·dr") || q.includes("dr")) State.strategy = "dxyz";
 
-    if (!State.curve) State.curve = "plane";
-    if (!State.field) State.field = "scalar";
+    if (q.includes("surface") || q.includes("flux")) State.category = "surface";
+    if (q.includes("theorem") || q.includes("stokes") || q.includes("divergence") || q.includes("green") || q.includes("ftli")) State.category = "theorem";
+    if (q.includes("line") && !State.category) State.category = "line";
+    if (!State.category) State.category = "line";
 
-    renderCurveStep();
-    breadcrumbs();
-    renderFieldStep();
-    if (State.strategy) {
-      renderStrategyStep();
-      showResult();
-      if (smartFeedback) smartFeedback.textContent = "Applied your description to a decision path.";
-    } else {
-      if (smartFeedback) smartFeedback.textContent = "We set curve and field. Choose the final strategy.";
+    if (State.category === "line") {
+      if (q.includes("plane") || q.includes("r2")) State.curve = "plane";
+      if (q.includes("space") || q.includes("r3")) State.curve = "space";
+      if (q.includes("scalar")) State.field = "scalar";
+      if (q.includes("vector")) State.field = "vector";
+      if (q.includes("ds") || q.includes("arc")) State.strategy = "ds";
+      if (q.includes("dx") || q.includes("dy")) State.strategy = "dxdy";
+      if (q.includes("dz")) State.strategy = "dxdydz";
     }
+
+    if (State.category === "surface") {
+      if (q.includes("scalar")) State.surfaceType = "scalar";
+      if (q.includes("vector") || q.includes("flux")) State.surfaceType = "vector";
+      if (q.includes("param")) State.surfaceForm = "param";
+      if (q.includes("graph")) State.surfaceForm = "graph";
+      if (q.includes("oriented") || q.includes("orientation")) State.oriented = "yes";
+    }
+
+    if (State.category === "theorem") {
+      if (q.includes("line") || q.includes("green") || q.includes("ftli")) State.theoremType = "line";
+      if (q.includes("surface") || q.includes("stokes") || q.includes("divergence")) State.theoremType = "surface";
+      if (q.includes("green")) State.theoremSurfaceKind = "green";
+      if (q.includes("ftli") || q.includes("conservative")) State.theoremSurfaceKind = "ftli";
+      if (q.includes("divergence") || q.includes("flux")) State.theoremSurfaceKind = "flux";
+      if (q.includes("stokes") || q.includes("curl")) State.theoremSurfaceKind = "curl";
+    }
+
+    renderCategoryStep();
+    breadcrumbs();
+    if (State.category === "line") {
+      renderCurveStep();
+      if (State.curve) renderFieldStep();
+    }
+    if (State.category === "surface") {
+      renderSurfaceTypeStep();
+    }
+    if (State.category === "theorem") {
+      renderTheoremTypeStep();
+    }
+    if (smartFeedback) smartFeedback.textContent = "Applied your description. Continue the flow if needed.";
   }
+
   if (smartApply) smartApply.onclick = applySmartSearch;
   if (smartInput) {
     smartInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") applySmartSearch();
     });
   }
-  renderCurveStep();
+
+  renderCategoryStep();
   breadcrumbs();
   renderExample();
 });
