@@ -18,36 +18,57 @@
 
 <body>
 
-  <header>
-    <h1>Decision Tree for Line Integrals</h1>
-    <p class="subtitle">
-      Choose the type of curve and field to obtain the correct line integral formulation.
-    </p>
-  </header>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Multivariable Calculus Toolkit</p>
+        <h1>Line Integral Decision Tree</h1>
+        <p class="subtitle">
+          A guided path to the correct line integral formula. Answer a few structural questions
+          and get the exact integral you need, with minimal memorization.
+        </p>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-title">What you decide</div>
+        <ul class="hero-list">
+          <li>Curve type (plane or space)</li>
+          <li>Field type (scalar or vector)</li>
+          <li>Integration strategy (ds or coordinate form)</li>
+        </ul>
+      </div>
+    </header>
 
   <!-- Breadcrumbs -->
-  <div id="breadcrumbs" class="breadcrumbs"></div>
+    <div class="controls">
+      <div id="breadcrumbs" class="breadcrumbs"></div>
+      <button id="reset-btn" class="ghost">Start Over</button>
+    </div>
 
   <!-- Decision steps -->
-  <main>
-    <section id="step-curve" class="step"></section>
-    <section id="step-field" class="step hidden"></section>
-    <section id="step-method" class="step hidden"></section>
-  </main>
+    <main>
+      <section id="step-curve" class="step"></section>
+      <section id="step-field" class="step hidden"></section>
+      <section id="step-method" class="step hidden"></section>
+    </main>
 
   <!-- Result -->
-  <section id="result" class="result hidden">
-    <h2>Recommended Integral</h2>
-    <div id="formula" class="formula"></div>
-    <div id="explanation" class="explanation"></div>
-  </section>
+    <section id="result" class="result hidden">
+      <h2>Recommended Integral</h2>
+      <div id="formula" class="formula"></div>
+      <div id="explanation" class="explanation"></div>
+    </section>
 
- <footer>
-  © Sheref Nasereldin, Ph.D.<br>
-  Assistant Professor of Mathematics<br>
-  University of Prince Edward Island (Cairo Campus)<br>
-  Educational use only
-</footer>
+    <footer>
+      <div class="footer-grid">
+        <div>
+          © Sheref Nasereldin, Ph.D.<br>
+          Assistant Professor of Mathematics<br>
+          University of Prince Edward Island (Cairo Campus)
+        </div>
+        <div class="footer-note">Educational use only</div>
+      </div>
+    </footer>
+  </div>
 
 </body>
 </html>

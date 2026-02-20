@@ -6,13 +6,15 @@ console.log("script.js loaded");
 const State = {
   curve: null,     // "plane" | "space"
   field: null,     // "scalar" | "vector"
-  strategy: null   // "ds" | "dxdy" | "dxdydz" | "dxyz"
+  strategy: null,  // "ds" | "dxdy" | "dxdydz" | "dxyz"
+  strategyLabel: null
 };
 
 function resetState() {
   State.curve = null;
   State.field = null;
   State.strategy = null;
+  State.strategyLabel = null;
 }
 
 /* ================================================================
@@ -56,7 +58,7 @@ function breadcrumbs() {
   if (State.field) parts.push(State.field === "scalar" ? "Scalar field" : "Vector field");
   if (State.strategy) parts.push(State.strategyLabel);
 
-  bc.textContent = parts.join(" → ");
+  bc.textContent = parts.length ? parts.join(" → ") : "Start by choosing the curve type.";
 }
 
 /* ================================================================
@@ -64,6 +66,17 @@ function breadcrumbs() {
    ================================================================ */
 function renderCurveStep() {
   clear($("step-curve"));
+  $("step-curve").classList.add("active");
+  $("step-field").classList.add("hidden");
+  $("step-method").classList.add("hidden");
+
+  const title = document.createElement("h2");
+  title.textContent = "Step 1 — What kind of curve is C?";
+  $("step-curve").appendChild(title);
+
+  const desc = document.createElement("p");
+  desc.textContent = "Choose whether the path lies in the plane or in space.";
+  $("step-curve").appendChild(desc);
 
   $("step-curve").appendChild(
     button("Plane Curve ℝ²", () => {
@@ -90,6 +103,17 @@ function renderCurveStep() {
 function renderFieldStep() {
   clear($("step-field"));
   $("step-field").classList.remove("hidden");
+  $("step-field").classList.add("active");
+  $("step-curve").classList.remove("active");
+  $("step-curve").classList.add("completed");
+
+  const title = document.createElement("h2");
+  title.textContent = "Step 2 — What type of field?";
+  $("step-field").appendChild(title);
+
+  const desc = document.createElement("p");
+  desc.textContent = "Scalar fields integrate a function; vector fields integrate a dot product.";
+  $("step-field").appendChild(desc);
 
   $("step-field").appendChild(
     button("Scalar Field", () => {
@@ -114,6 +138,17 @@ function renderFieldStep() {
 function renderStrategyStep() {
   clear($("step-method"));
   $("step-method").classList.remove("hidden");
+  $("step-method").classList.add("active");
+  $("step-field").classList.remove("active");
+  $("step-field").classList.add("completed");
+
+  const title = document.createElement("h2");
+  title.textContent = "Step 3 — Choose the integration form";
+  $("step-method").appendChild(title);
+
+  const desc = document.createElement("p");
+  desc.textContent = "Pick the form that matches the information given in the problem.";
+  $("step-method").appendChild(desc);
 
   /* ---------------- Plane + Scalar ---------------- */
   if (State.curve === "plane" && State.field === "scalar") {
@@ -278,5 +313,15 @@ function showResult() {
    INIT
    ================================================================ */
 document.addEventListener("DOMContentLoaded", () => {
+  const resetBtn = $("reset-btn");
+  if (resetBtn) {
+    resetBtn.onclick = () => {
+      resetState();
+      $("result").classList.add("hidden");
+      renderCurveStep();
+      breadcrumbs();
+    };
+  }
   renderCurveStep();
+  breadcrumbs();
 });
