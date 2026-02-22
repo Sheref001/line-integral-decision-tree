@@ -557,21 +557,3 @@ button.ghost:hover {
   }
 }
 }
-
-.welcome-banner {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 1rem 1.2rem;
-  box-shadow: var(--shadow);
-  border: 1px solid #eef2f6;
-}
-
-.welcome-banner h2 {
-  font-family: "Fraunces", serif;
-  margin: 0 0 0.4rem;
-}
-
-.welcome-banner p {
-  margin: 0;
-  color: var(--muted);
-}
